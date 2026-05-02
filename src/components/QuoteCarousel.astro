@@ -1,0 +1,58 @@
+---
+/**
+ * QuoteCarousel — the human voice on the page.
+ * Reads /content/quotes.json. Only renders quotes with permissionGranted: true.
+ * Format: anonymized to vertical + city + staff size only.
+ */
+import quotesData from '../../content/quotes.json';
+
+interface Quote {
+  text: string;
+  vertical: string;
+  city: string;
+  country: string;
+  staffSize: number;
+  permissionGranted: boolean;
+}
+
+const all: Quote[] = quotesData.quotes as Quote[];
+const cleared = all.filter((q) => q.permissionGranted);
+---
+
+<section class="section bg-paper-subtle" aria-labelledby="quotes-heading">
+  <div class="container-page">
+    <h2 id="quotes-heading" class="sr-only">Quotes from founders</h2>
+
+    {
+      cleared.length === 0 ? (
+        <div class="max-w-reading">
+          <p class="eyebrow mb-4">Quotes</p>
+          <p class="text-lg md:text-xl text-ink-subtle leading-relaxed">
+            Quotes from founders accumulate here. They appear after permission is
+            granted on WhatsApp. Anonymized to vertical, city, and staff size.
+          </p>
+          <p class="mt-4 font-mono text-2xs text-ink-muted">
+            First quote ships with the first permission-cleared call.
+          </p>
+        </div>
+      ) : (
+        <ul class="space-y-12 md:space-y-16">
+          {cleared.map((q) => (
+            <li class="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-4 md:gap-12 items-end">
+              <blockquote class="space-y-4">
+                <p class="font-serif text-2xl md:text-3xl leading-snug text-ink max-w-reading">
+                  &ldquo;{q.text}&rdquo;
+                </p>
+              </blockquote>
+              <cite class="not-italic font-mono text-xs text-ink-muted whitespace-nowrap">
+                <span class="text-ink">Owner</span>, {q.vertical}
+                <br />
+                {q.city}, {q.country} · <span class="data">{q.staffSize}</span> staff
+              </cite>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </div>
+</section>

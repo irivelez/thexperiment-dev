@@ -1,0 +1,73 @@
+---
+/**
+ * SlotBooker — the only commercial action on the site.
+ * Two booking surfaces: Calendly (English-speakers, sophisticated) +
+ * WhatsApp click-to-chat (LATAM SMBs, native channel).
+ * Both above-the-fold, equally weighted — meet customers where they live.
+ */
+import { SITE } from '@lib/constants';
+
+interface Props {
+  variant?: 'hero' | 'tail';
+}
+
+const { variant = 'hero' } = Astro.props;
+const isHero = variant === 'hero';
+---
+
+<section class:list={['container-page', isHero ? 'pb-12 md:pb-20' : 'section']}>
+  {
+    !isHero && (
+      <h2 class="mb-8">Book a slot</h2>
+    )
+  }
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 max-w-3xl">
+    <a
+      href={SITE.cta.whatsapp}
+      target="_blank"
+      rel="noopener"
+      class="group flex flex-col gap-3 p-6 md:p-8 border border-ink hover:bg-ink hover:text-paper transition-colors no-underline"
+    >
+      <span class="eyebrow group-hover:text-paper-line">Recommended for LATAM SMBs</span>
+      <span class="font-serif text-2xl md:text-3xl leading-tight">
+        Book via WhatsApp
+      </span>
+      <span class="text-sm text-ink-subtle group-hover:text-paper-subtle leading-relaxed">
+        Spanish or English. 30 minutes. No deposit. Native channel — message me
+        directly to coordinate a time.
+      </span>
+      <span class="font-mono text-2xs uppercase tracking-[0.18em] mt-auto pt-2">
+        Open WhatsApp →
+      </span>
+    </a>
+
+    <a
+      href={SITE.cta.calendly}
+      target="_blank"
+      rel="noopener"
+      class="group flex flex-col gap-3 p-6 md:p-8 border border-paper-line hover:border-ink transition-colors no-underline"
+    >
+      <span class="eyebrow">Recommended for everyone else</span>
+      <span class="font-serif text-2xl md:text-3xl leading-tight text-ink">
+        Book via Calendly
+      </span>
+      <span class="text-sm text-ink-subtle leading-relaxed">
+        English. 30 minutes. $5 refundable deposit (it filters time-wasters and
+        gets refunded the moment we meet).
+      </span>
+      <span class="font-mono text-2xs uppercase tracking-[0.18em] text-ink mt-auto pt-2 group-hover:text-signal">
+        Pick a time →
+      </span>
+    </a>
+  </div>
+
+  {
+    isHero && (
+      <p class="mt-6 text-sm text-ink-muted max-w-reading">
+        Conversation is anonymized in everything that gets published. Your name and business never appear.
+        Quotes only with explicit WhatsApp permission, after the call.
+      </p>
+    )
+  }
+</section>
