@@ -1,0 +1,87 @@
+---
+/**
+ * DiaryFeed — the receipts. Latest N entries from the public diary.
+ * Reads from the `diary` content collection.
+ */
+import { getCollection } from 'astro:content';
+
+interface Props {
+  limit?: number;
+  showSeeAll?: boolean;
+}
+
+const { limit = 5, showSeeAll = true } = Astro.props;
+
+const all = await getCollection('diary');
+const entries = all
+  .sort((a, b) => b.data.day - a.data.day)
+  .slice(0, limit);
+
+function fmt(date: Date) {
+  return date.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+  });
+}
+---
+
+<section class="section" aria-labelledby="diary-heading">
+  <div class="container-page">
+    <div class="flex items-baseline justify-between mb-10 gap-6">
+      <h2 id="diary-heading">Diary</h2>
+      {
+        showSeeAll && (
+          <a href="/diary" class="eyebrow no-underline hover:text-signal">
+            All entries →
+          </a>
+        )
+      }
+    </div>
+
+    <ol class="space-y-12 md:space-y-16">
+      {
+        entries.map((entry) => (
+          <li>
+            <a
+              href={`/diary/${entry.id}`}
+              class="group block no-underline hover:text-ink"
+            >
+              <div class="grid grid-cols-1 md:grid-cols-[8rem_1fr] gap-3 md:gap-10">
+                <div class="space-y-1">
+                  <p class="data text-2xl text-ink leading-none">
+                    {String(entry.data.day).padStart(2, '0')}
+                  </p>
+                  <p class="font-mono text-2xs uppercase tracking-[0.18em] text-ink-muted">
+                    {fmt(entry.data.date)}
+                  </p>
+                  {entry.data.conversations > 0 && (
+                    <p class="font-mono text-2xs text-ink-faint">
+                      {entry.data.conversations} convos
+                    </p>
+                  )}
+                </div>
+                <div class="space-y-3">
+                  <h3 class="text-2xl md:text-3xl group-hover:text-signal transition-colors">
+                    {entry.data.title}
+                  </h3>
+                  <p class="text-base md:text-lg text-ink-subtle leading-relaxed max-w-reading">
+                    {entry.data.excerpt}
+                  </p>
+                  <p class="font-mono text-2xs uppercase tracking-[0.18em] text-ink-muted group-hover:text-signal">
+                    Read entry →
+                  </p>
+                </div>
+              </div>
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+
+    {
+      entries.length === 0 && (
+        <p class="text-ink-muted">No entries yet. Day 1 publishes May 2.</p>
+      )
+    }
+  </div>
+</section>
