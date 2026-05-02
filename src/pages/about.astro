@@ -1,0 +1,73 @@
+---
+import Base from '@layouts/Base.astro';
+import { SITE } from '@lib/constants';
+---
+
+<Base
+  title="About the experiment"
+  description="Who is running this and why."
+>
+  <section class="container-page py-16 md:py-24 max-w-reading">
+    <p class="eyebrow mb-4">About</p>
+    <h1>Who is running this and why.</h1>
+
+    <div class="mt-10 prose-body space-y-5">
+      <p>
+        The experiment is run by Irina Velez. Fifteen years in LATAM digital
+        and AI strategy at Nokia and Claro across eleven countries; now
+        based in San Francisco; building toward a thing that can plausibly
+        be called <strong class="font-medium text-ink">Noa</strong> — but only
+        if 100 founders confirm it.
+      </p>
+      <p>
+        This site exists for the discovery sprint. It runs from May 2 to May 17,
+        2026. After that, the experiment closes and whatever the data points to
+        gets built — under a different surface.
+      </p>
+      <p>
+        The deeper biography, the manifesto, and the longer-running
+        body of work all live at <a
+          href={SITE.author.site}
+          target="_blank"
+          rel="noopener"
+          class="font-medium"
+          >{SITE.author.site.replace('https://', '')}</a
+        >. This site stays narrow on purpose: the experiment is the experiment.
+      </p>
+      <p>
+        For long-form thinking during and after the sprint, the
+        newsletter is <a
+          href={SITE.newsletter.url}
+          target="_blank"
+          rel="noopener"
+          class="font-medium">{SITE.newsletter.name}</a
+        >.
+      </p>
+    </div>
+
+    <div class="mt-12 grid grid-cols-2 gap-6 max-w-md">
+      <a
+        href={SITE.author.site}
+        target="_blank"
+        rel="noopener"
+        class="btn"
+      >
+        irinavelez.com →
+      </a>
+      <a
+        href={SITE.newsletter.url}
+        target="_blank"
+        rel="noopener"
+        class="btn-primary"
+      >
+        {SITE.newsletter.name} →
+      </a>
+    </div>
+
+    <p class="mt-12">
+      <a href="/" class="font-mono text-sm tracking-wide hover:text-signal">
+        ← Back to the experiment
+      </a>
+    </p>
+  </section>
+</Base>

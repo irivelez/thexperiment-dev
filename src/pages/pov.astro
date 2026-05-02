@@ -1,0 +1,75 @@
+---
+import Base from '@layouts/Base.astro';
+import { SITE } from '@lib/constants';
+import { getProgress } from '@lib/state';
+
+const progress = getProgress();
+const releaseDate = new Date('2026-05-17T17:00:00-05:00');
+const now = new Date();
+const releaseInMs = releaseDate.getTime() - now.getTime();
+const isReleased = releaseInMs <= 0;
+
+const daysUntil = Math.max(0, Math.ceil(releaseInMs / (1000 * 60 * 60 * 24)));
+---
+
+<Base
+  title="POV — publishes May 17"
+  description="The point of view. 1 page. 600 words. Single contrarian claim. Locked until synthesis day."
+  noindex={!isReleased}
+>
+  <section class="container-page py-24 md:py-32 max-w-reading">
+    <p class="eyebrow mb-6">The POV</p>
+
+    {
+      isReleased ? (
+        <div>
+          <h1>The thesis is published.</h1>
+          <p class="mt-6 prose-body">
+            The synthesized point of view from 100 conversations across 16 days is below.
+            (Pending — to be hand-published on May 17.)
+          </p>
+        </div>
+      ) : (
+        <div>
+          <h1>Locked until May 17.</h1>
+          <p class="mt-6 prose-body">
+            The point of view publishes on the final day of the experiment — the same day applications
+            go in. One page, ~600 words, one contrarian headline. It is the synthesized output of every
+            conversation in the diary and every pattern that survived the 16 days.
+          </p>
+
+          <div class="mt-12 grid grid-cols-2 gap-6 md:gap-12 max-w-md">
+            <div>
+              <p class="eyebrow mb-2">Days until release</p>
+              <p class="data text-5xl md:text-6xl text-ink leading-none">{daysUntil}</p>
+            </div>
+            <div>
+              <p class="eyebrow mb-2">Calls remaining</p>
+              <p class="data text-5xl md:text-6xl text-ink leading-none">
+                {progress.callsTarget - progress.callsComplete}
+              </p>
+            </div>
+          </div>
+
+          <div class="mt-12 border-l-2 border-paper-line pl-5 space-y-3">
+            <p class="eyebrow text-ink-muted">What it will contain</p>
+            <ul class="text-sm text-ink-subtle space-y-2 leading-relaxed">
+              <li>▸ The bet, in one sentence.</li>
+              <li>▸ What everyone assumes about LATAM SMBs and AI.</li>
+              <li>▸ What 100 conversations told me that contradicts it.</li>
+              <li>▸ The wedge product this implies.</li>
+              <li>▸ Why now.</li>
+              <li>▸ 3–5 anonymized quotes — Owner, [vertical], [city], [N] staff.</li>
+            </ul>
+          </div>
+
+          <p class="mt-12">
+            <a href={SITE.newsletter.url} target="_blank" rel="noopener" class="btn-primary">
+              Get it the moment it ships →
+            </a>
+          </p>
+        </div>
+      )
+    }
+  </section>
+</Base>
