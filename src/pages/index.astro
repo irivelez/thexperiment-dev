@@ -1,0 +1,84 @@
+---
+import Base from '@layouts/Base.astro';
+import Counter from '@components/Counter.astro';
+import PatternsEmerging from '@components/PatternsEmerging.astro';
+import DiaryFeed from '@components/DiaryFeed.astro';
+import QuoteCarousel from '@components/QuoteCarousel.astro';
+import SlotBooker from '@components/SlotBooker.astro';
+import { SITE, SPINE, VILLAIN } from '@lib/constants';
+
+const renderBold = (text: string) =>
+  text.replace(/\*\*(.+?)\*\*/g, '<strong class="font-medium text-ink">$1</strong>');
+---
+
+<Base
+  title="Day 0 of 16. The bet."
+  description={SITE.description}
+>
+  <Counter />
+
+  <section class="container-page pb-12 md:pb-16">
+    <h1 class="max-w-4xl">
+      100 conversations with Spanish-speaking SMB founders.
+      <span class="text-ink-faint">16 days. Watch live.</span>
+    </h1>
+
+    <p class="mt-6 text-lg md:text-xl text-ink-subtle leading-relaxed max-w-reading">
+      The hypothesis is something I'm calling <strong class="font-medium text-ink">Noa</strong>.
+      The data decides if it survives.
+    </p>
+  </section>
+
+  <SlotBooker variant="hero" />
+
+  <section class="section">
+    <div class="container-page">
+      <p class="eyebrow mb-8">The bet</p>
+      <div class="prose-body space-y-5 max-w-reading">
+        {SPINE.en.map((paragraph) => (
+          <p set:html={renderBold(paragraph)} />
+        ))}
+      </div>
+
+      <div class="mt-12 max-w-reading border-l-2 border-signal pl-5 py-2">
+        <p class="eyebrow text-signal mb-2">Counter-positioning</p>
+        <p class="text-base md:text-lg text-ink-subtle leading-relaxed">
+          {VILLAIN.en}
+        </p>
+      </div>
+
+      <p class="mt-10">
+        <a href="/method" class="font-mono text-sm tracking-wide hover:text-signal">
+          Read the methodology →
+        </a>
+      </p>
+    </div>
+  </section>
+
+  <PatternsEmerging />
+
+  <DiaryFeed limit={5} />
+
+  <QuoteCarousel />
+
+  <SlotBooker variant="tail" />
+
+  <section class="section">
+    <div class="container-page max-w-reading">
+      <p class="eyebrow mb-4">Or just watch</p>
+      <h2>Subscribe to {SITE.newsletter.name}.</h2>
+      <p class="mt-4 prose-body">
+        {SITE.newsletter.description} Three editions during the sprint
+        (May 3, May 10, May 17). Long-form.
+      </p>
+      <a
+        href={SITE.newsletter.url}
+        target="_blank"
+        rel="noopener"
+        class="btn-primary mt-8"
+      >
+        Subscribe →
+      </a>
+    </div>
+  </section>
+</Base>
