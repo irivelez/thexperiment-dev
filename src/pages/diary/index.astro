@@ -1,0 +1,78 @@
+---
+import Base from '@layouts/Base.astro';
+import { getCollection } from 'astro:content';
+
+const all = await getCollection('diary');
+const entries = all.sort((a, b) => b.data.day - a.data.day);
+
+function fmt(date: Date) {
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+}
+---
+
+<Base
+  title="Diary"
+  description="Daily entries from the experiment. 16 days. 100 conversations."
+>
+  <section class="container-page py-16 md:py-24">
+    <p class="eyebrow mb-4">All entries</p>
+    <h1>Diary</h1>
+    <p class="mt-6 prose-body max-w-reading">
+      One entry per day during the sprint. Updated by the time the last call
+      ends. The receipts of the experiment in chronological reverse — newest first.
+    </p>
+  </section>
+
+  <section class="container-page pb-24">
+    <ol class="space-y-12 md:space-y-16">
+      {
+        entries.map((entry) => (
+          <li>
+            <a
+              href={`/diary/${entry.id}`}
+              class="group block no-underline hover:text-ink"
+            >
+              <div class="grid grid-cols-1 md:grid-cols-[10rem_1fr] gap-3 md:gap-12">
+                <div class="space-y-1">
+                  <p class="data text-3xl text-ink leading-none">
+                    {String(entry.data.day).padStart(2, '0')}
+                    <span class="text-ink-faint text-base">/{16}</span>
+                  </p>
+                  <p class="font-mono text-2xs uppercase tracking-[0.18em] text-ink-muted">
+                    {fmt(entry.data.date)}
+                  </p>
+                  {entry.data.conversations > 0 && (
+                    <p class="font-mono text-2xs text-ink-faint">
+                      {entry.data.conversations} convos to date
+                    </p>
+                  )}
+                </div>
+                <div class="space-y-3">
+                  <h2 class="text-3xl md:text-4xl group-hover:text-signal transition-colors">
+                    {entry.data.title}
+                  </h2>
+                  <p class="text-base md:text-lg text-ink-subtle leading-relaxed max-w-reading">
+                    {entry.data.excerpt}
+                  </p>
+                  <p class="font-mono text-2xs uppercase tracking-[0.18em] text-ink-muted group-hover:text-signal">
+                    Read entry →
+                  </p>
+                </div>
+              </div>
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+
+    {
+      entries.length === 0 && (
+        <p class="text-ink-muted">No entries yet. Day 1 publishes May 2.</p>
+      )
+    }
+  </section>
+</Base>
