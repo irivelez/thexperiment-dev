@@ -5,6 +5,7 @@ import PatternsEmerging from '@components/PatternsEmerging.astro';
 import DiaryFeed from '@components/DiaryFeed.astro';
 import QuoteCarousel from '@components/QuoteCarousel.astro';
 import SlotBooker from '@components/SlotBooker.astro';
+import CalInline from '@components/CalInline.astro';
 import { SITE, SPINE, VILLAIN } from '@lib/constants';
 
 const renderBold = (text: string) =>
@@ -65,7 +66,7 @@ const renderBold = (text: string) =>
 
   <QuoteCarousel />
 
-  <SlotBooker variant="tail" />
+  <CalInline />
 
   <section class="section">
     <div class="container-page max-w-reading">

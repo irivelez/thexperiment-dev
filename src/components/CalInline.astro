@@ -1,0 +1,104 @@
+---
+/**
+ * CalInline — Cal.com inline embed.
+ * Renders the live calendar on-page. Used at the tail position only —
+ * the hero keeps the bold CTA card to preserve page rhythm.
+ *
+ * Visitor has read the bet, seen patterns, scrolled diary + quotes by the
+ * time they reach this. Calendar appears as the natural endpoint.
+ *
+ * Lab-notebook theming via cssVars (signal-orange brand, ink text, paper bg).
+ */
+import { SITE } from '@lib/constants';
+
+// Strip protocol + host to get the path Cal.com expects ("thexperiment/40min")
+const calLink = SITE.cta.booking.replace(/^https?:\/\/cal\.com\//, '');
+
+const elementId = 'cal-inline-embed';
+const namespace = 'embed-40min';
+---
+
+<section class="section" aria-labelledby="cal-inline-heading">
+  <div class="container-page">
+    <div class="flex items-baseline justify-between mb-8 gap-6">
+      <h2 id="cal-inline-heading">Pick a time.</h2>
+      <p class="eyebrow text-right">
+        40 minutes · free · anonymized
+      </p>
+    </div>
+
+    <p class="prose-body max-w-reading mb-10">
+      You've read the bet, the patterns, the diary. If you're a Spanish-speaking
+      SMB founder using or refusing AI tools — the calendar is below. Pick a
+      time. Calendar invite + automated reminder. No deposit, no sales pitch.
+      Quotes only with explicit permission, after the call.
+    </p>
+
+    <div
+      id={elementId}
+      class="border border-paper-line bg-paper"
+      style="width: 100%; min-height: 700px; overflow: hidden"
+    >
+      <noscript>
+        <div class="p-8 text-center">
+          <p class="prose-body mb-4">JavaScript is needed to render the inline calendar.</p>
+          <a href={SITE.cta.booking} class="btn-primary" target="_blank" rel="noopener">
+            Open Cal.com directly →
+          </a>
+        </div>
+      </noscript>
+    </div>
+  </div>
+</section>
+
+<script is:inline define:vars={{ calLink, elementId, namespace }}>
+  (function (C, A, L) {
+    let p = function (a, ar) { a.q.push(ar); };
+    let d = C.document;
+    C.Cal = C.Cal || function () {
+      let cal = C.Cal;
+      let ar = arguments;
+      if (!cal.loaded) {
+        cal.ns = {};
+        cal.q = cal.q || [];
+        d.head.appendChild(d.createElement("script")).src = A;
+        cal.loaded = true;
+      }
+      if (ar[0] === L) {
+        const api = function () { p(api, arguments); };
+        const namespace = ar[1];
+        api.q = api.q || [];
+        if (typeof namespace === "string") {
+          cal.ns[namespace] = cal.ns[namespace] || api;
+          p(cal.ns[namespace], ar);
+          p(cal, ["initNamespace", namespace]);
+        } else { p(cal, ar); }
+        return;
+      }
+      p(cal, ar);
+    };
+  })(window, "https://app.cal.com/embed/embed.js", "Cal");
+
+  Cal("init", namespace, { origin: "https://cal.com" });
+
+  Cal.ns[namespace]("inline", {
+    elementOrSelector: "#" + elementId,
+    config: { layout: "month_view", theme: "light" },
+    calLink: calLink,
+  });
+
+  Cal.ns[namespace]("ui", {
+    cssVarsPerTheme: {
+      light: {
+        "cal-brand": "#c2410c",
+        "cal-text-emphasis": "#0a0a0a",
+        "cal-bg": "#fafaf7",
+        "cal-bg-emphasis": "#f4f4ee",
+        "cal-border": "#e5e5dd",
+        "cal-border-emphasis": "#0a0a0a",
+      }
+    },
+    hideEventTypeDetails: false,
+    layout: "month_view",
+  });
+</script>
