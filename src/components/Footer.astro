@@ -1,0 +1,48 @@
+---
+import { SITE } from '@lib/constants';
+import { getProgress, formatTimestamp } from '@lib/state';
+
+const progress = getProgress();
+---
+
+<footer class="border-t border-paper-line mt-16">
+  <div class="container-page py-12 grid gap-10 md:grid-cols-3">
+    <div class="space-y-3">
+      <p class="eyebrow">The experiment</p>
+      <p class="text-sm text-ink-subtle max-w-sm leading-relaxed">
+        16 days. 100 conversations with Spanish-speaking SMB founders. Synthesis
+        publishes May 17.
+      </p>
+      <p class="font-mono text-xs text-ink-muted">
+        Last updated <span class="text-ink">{formatTimestamp(progress.lastUpdated)}</span>
+      </p>
+    </div>
+
+    <div class="space-y-3">
+      <p class="eyebrow">Surfaces</p>
+      <ul class="space-y-2 text-sm">
+        <li><a href="/diary" class="text-ink-subtle hover:text-ink no-underline">Daily diary</a></li>
+        <li><a href="/method" class="text-ink-subtle hover:text-ink no-underline">Methodology</a></li>
+        <li><a href="/pov" class="text-ink-subtle hover:text-ink no-underline">POV (publishes May 17)</a></li>
+        <li><a href={SITE.newsletter.url} class="text-ink-subtle hover:text-ink no-underline" target="_blank" rel="noopener">{SITE.newsletter.name} ↗</a></li>
+      </ul>
+    </div>
+
+    <div class="space-y-3">
+      <p class="eyebrow">The operator</p>
+      <ul class="space-y-2 text-sm">
+        <li><a href={SITE.author.site} class="text-ink-subtle hover:text-ink no-underline" target="_blank" rel="noopener">{SITE.author.name} ↗</a></li>
+        <li><a href={SITE.author.linkedin} class="text-ink-subtle hover:text-ink no-underline" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href={SITE.author.x} class="text-ink-subtle hover:text-ink no-underline" target="_blank" rel="noopener">X ↗</a></li>
+        <li><a href={`mailto:${SITE.legal.email}`} class="text-ink-subtle hover:text-ink no-underline">{SITE.legal.email}</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="border-t border-paper-line">
+    <div class="container-page py-6 flex flex-col md:flex-row gap-3 md:items-center md:justify-between text-2xs font-mono text-ink-muted">
+      <span>{SITE.legal.entity} · © {new Date().getFullYear()}</span>
+      <span>Built in 2 days. Watching for 16.</span>
+    </div>
+  </div>
+</footer>

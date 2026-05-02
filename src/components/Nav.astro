@@ -1,0 +1,54 @@
+---
+import { SITE } from '@lib/constants';
+
+const links = [
+  { label: 'Diary', href: '/diary' },
+  { label: 'Method', href: '/method' },
+  { label: 'POV', href: '/pov', locked: true },
+  { label: 'About', href: '/about' },
+];
+
+const path = Astro.url.pathname;
+---
+
+<header class="border-b border-paper-line">
+  <div class="container-page py-5 flex items-center justify-between gap-6">
+    <a
+      href="/"
+      class="font-mono text-sm tracking-tight no-underline hover:text-signal transition-colors"
+    >
+      <span class="opacity-60">{SITE.domain.split('.')[0]}.</span><span>{SITE.domain.split('.').slice(1).join('.')}</span>
+    </a>
+
+    <nav class="flex items-center gap-5 md:gap-7">
+      {
+        links.map(({ label, href, locked }) => (
+          <a
+            href={href}
+            class:list={[
+              'font-mono text-xs uppercase tracking-[0.18em] no-underline',
+              path === href
+                ? 'text-ink'
+                : 'text-ink-muted hover:text-ink',
+            ]}
+          >
+            {label}
+            {locked && (
+              <span class="ml-1 text-ink-faint" aria-label="locked until May 17">
+                ◯
+              </span>
+            )}
+          </a>
+        ))
+      }
+      <a
+        href={SITE.newsletter.url}
+        class="hidden md:inline-flex font-mono text-xs uppercase tracking-[0.18em] no-underline text-ink hover:text-signal"
+        target="_blank"
+        rel="noopener"
+      >
+        {SITE.newsletter.name} →
+      </a>
+    </nav>
+  </div>
+</header>
