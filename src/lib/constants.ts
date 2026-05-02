@@ -33,21 +33,38 @@ export const SITE = {
 } as const;
 
 /**
- * The spine — the four-paragraph manifesto that anchors every surface.
- * One source. Used in hero, About, social copy, application narratives.
+ * The hero — the question that opens the page.
+ * Frames the experiment as discovery, not declaration. Embodies Emily Benn's
+ * principle ("insight isn't a starting point") by leading with a question.
+ */
+export const HERO = {
+  en: {
+    eyebrow: 'Sixteen days. 100 conversations. One question:',
+    question:
+      'What should a fifteen-year LATAM enterprise operator actually build for Spanish-speaking SMBs in AI?',
+  },
+  es: {
+    eyebrow: 'Dieciséis días. 100 conversaciones. Una pregunta:',
+    question:
+      '¿Qué debería construir, después de quince años operando empresas latinoamericanas, para las PYMES hispanohablantes en IA?',
+  },
+} as const;
+
+/**
+ * The spine — the body of the bet. Three paragraphs.
+ * Working hypothesis (Noa) + insight-isn't-a-starting-point + building-in-public + CTA close.
+ * One source. Used in The Bet section, About, social copy, application narratives.
  */
 export const SPINE = {
   en: [
-    `Most US-built AI tools won't survive their first month with a LATAM SMB. I have a hypothesis why — but I want proof.`,
-    `So for the next 16 days, I'm having 100 conversations with Spanish-speaking SMB founders about how they actually run their business in WhatsApp. The hypothesis is something I'm calling **Noa**: that WhatsApp isn't a channel for these businesses, it's the OS — and vertical AI agents get built on it, not retrofitted to it. The experiment will tell me if I'm right, wrong, or partway between.`,
-    `Live counter below. Daily diary on LinkedIn, long-form in **Modo Build**. The synthesis publishes May 17 — same day my a16z Speedrun and YC applications go in. Those are deadlines. The thesis is the real output.`,
-    `If you're a LATAM SMB founder using or refusing AI tools — book a slot. 40 minutes. Anonymized. I publish what I learn.`,
+    `I have a working hypothesis — call it **Noa** — that WhatsApp isn't a channel for these businesses, it's the OS. Vertical agents get built on it, not retrofitted to it. But insight isn't a starting point. It's something you build.`,
+    `So I'm building it in public — counter, diary, quotes, contradictions, including the numbers that make me look stupid. Synthesis publishes May 17, same day my a16z Speedrun and YC applications go in. Those are deadlines. The POV is the output.`,
+    `Pick a time. Or watch live.`,
   ],
   es: [
-    `La mayoría de las herramientas de IA hechas en San Francisco no van a sobrevivir su primer mes con una PYME latinoamericana. Tengo una hipótesis del porqué — pero quiero pruebas.`,
-    `Por los próximos 16 días, voy a tener 100 conversaciones con fundadores de PYMES hispanohablantes sobre cómo realmente operan su negocio en WhatsApp. La hipótesis se llama **Noa**: WhatsApp no es un canal para estos negocios, es el sistema operativo — y los agentes de IA verticales se construyen sobre WhatsApp primero, no adaptados después. El experimento dirá si tengo razón, si estoy equivocada, o algo intermedio.`,
-    `Contador en vivo abajo. Diario diario en LinkedIn, formato largo en **Modo Build**. La síntesis se publica el 17 de mayo — el mismo día en que envío mis aplicaciones a a16z Speedrun y YC. Esos son los deadlines. La tesis es el resultado real.`,
-    `Si sos fundador o fundadora de una PYME en LATAM usando — o rechazando — herramientas de IA, agendá tu turno. 40 minutos. Anonimizado. Publico lo que aprendo.`,
+    `Tengo una hipótesis de trabajo — la llamo **Noa** — que WhatsApp no es un canal para estos negocios, es el sistema operativo. Los agentes verticales se construyen sobre él, no adaptados después. Pero el insight no es un punto de partida. Es algo que se construye.`,
+    `Por eso lo estoy construyendo en público — contador, diario, citas, contradicciones, incluyendo los números que me hacen quedar mal. La síntesis se publica el 17 de mayo, el mismo día en que envío mis aplicaciones a a16z Speedrun y YC. Esos son deadlines. La tesis es el resultado real.`,
+    `Agendá tu turno. O mirá en vivo.`,
   ],
 } as const;
 
