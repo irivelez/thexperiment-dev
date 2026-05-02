@@ -15,8 +15,8 @@ export const SITE = {
   author: {
     name: 'Irina Velez',
     site: 'https://irinavelez.com',
-    linkedin: 'https://linkedin.com/in/irinavelez',
-    x: 'https://x.com/irinavelez',
+    linkedin: 'https://www.linkedin.com/in/irina-velez/en/',
+    x: 'https://x.com/Irina_Velez',
   },
   newsletter: {
     name: 'Modo Build',
