@@ -1,0 +1,12 @@
+{
+  "$schema": "Each pattern: { text, status, count, verticals }. Status taxonomy: pending | early-signal | confirmed | contradicted. Promote early-signal → confirmed at 3+ mentions across 2+ verticals.",
+  "lastUpdated": "2026-05-01",
+  "patterns": [
+    {
+      "text": "The experiment hasn't started yet. First patterns appear after 3 conversations.",
+      "status": "pending",
+      "count": 0,
+      "verticals": []
+    }
+  ]
+}

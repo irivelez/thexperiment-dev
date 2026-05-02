@@ -1,0 +1,5 @@
+{
+  "$schema": "Each quote: { text, vertical, city, country, staffSize, permissionGranted: true }. Only included on the site when permissionGranted === true. No names, no business names.",
+  "lastUpdated": "2026-05-01",
+  "quotes": []
+}
