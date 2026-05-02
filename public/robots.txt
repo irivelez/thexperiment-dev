@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://thexperiment.dev/sitemap-index.xml
