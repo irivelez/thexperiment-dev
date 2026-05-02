@@ -24,11 +24,11 @@ export const SITE = {
     url: 'https://modobuild.beehiiv.com',
   },
   cta: {
-    calendly: 'https://calendly.com/irinavelez/30min',
+    booking: 'https://cal.com/thexperiment/40min',
     whatsapp:
       'https://wa.me/?text=' +
       encodeURIComponent(
-        'Hola, vengo de thexperiment.dev — quiero agendar una conversación de 30 min sobre cómo opero mi negocio en WhatsApp.'
+        'Hola, vengo de thexperiment.dev — quiero agendar una conversación de 40 min sobre cómo opero mi negocio en WhatsApp.'
       ),
   },
   legal: {
@@ -46,13 +46,13 @@ export const SPINE = {
     `Most US-built AI tools won't survive their first month with a LATAM SMB. I have a hypothesis why — but I want proof.`,
     `So for the next 16 days, I'm having 100 conversations with Spanish-speaking SMB founders about how they actually run their business in WhatsApp. The hypothesis is something I'm calling **Noa**: that WhatsApp isn't a channel for these businesses, it's the OS — and vertical AI agents get built on it, not retrofitted to it. The experiment will tell me if I'm right, wrong, or partway between.`,
     `Live counter below. Daily diary on LinkedIn, long-form in **Modo Build**. The synthesis publishes May 17 — same day my a16z Speedrun and YC applications go in. Those are deadlines. The thesis is the real output.`,
-    `If you're a LATAM SMB founder using or refusing AI tools — book a slot. 30 minutes. Anonymized. I publish what I learn.`,
+    `If you're a LATAM SMB founder using or refusing AI tools — book a slot. 40 minutes. Anonymized. I publish what I learn.`,
   ],
   es: [
     `La mayoría de las herramientas de IA hechas en San Francisco no van a sobrevivir su primer mes con una PYME latinoamericana. Tengo una hipótesis del porqué — pero quiero pruebas.`,
     `Por los próximos 16 días, voy a tener 100 conversaciones con fundadores de PYMES hispanohablantes sobre cómo realmente operan su negocio en WhatsApp. La hipótesis se llama **Noa**: WhatsApp no es un canal para estos negocios, es el sistema operativo — y los agentes de IA verticales se construyen sobre WhatsApp primero, no adaptados después. El experimento dirá si tengo razón, si estoy equivocada, o algo intermedio.`,
     `Contador en vivo abajo. Diario diario en LinkedIn, formato largo en **Modo Build**. La síntesis se publica el 17 de mayo — el mismo día en que envío mis aplicaciones a a16z Speedrun y YC. Esos son los deadlines. La tesis es el resultado real.`,
-    `Si sos fundador o fundadora de una PYME en LATAM usando — o rechazando — herramientas de IA, agendá tu turno. 30 minutos. Anonimizado. Publico lo que aprendo.`,
+    `Si sos fundador o fundadora de una PYME en LATAM usando — o rechazando — herramientas de IA, agendá tu turno. 40 minutos. Anonimizado. Publico lo que aprendo.`,
   ],
 } as const;
 
