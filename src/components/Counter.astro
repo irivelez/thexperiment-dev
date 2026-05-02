@@ -1,0 +1,75 @@
+---
+/**
+ * Counter — the hero stat block. The single most important component on the
+ * site. Reads from /content/_state.json (updated by /log-call after each call).
+ */
+import { getProgress } from '@lib/state';
+
+const p = getProgress();
+const isLive = p.dayCurrent > 0;
+---
+
+<section
+  class="container-page pt-12 md:pt-20 pb-10"
+  aria-label="Live experiment progress"
+>
+  <div class="flex items-center gap-3 mb-8">
+    <span
+      class:list={[
+        'inline-block w-2 h-2 rounded-full',
+        isLive ? 'bg-signal animate-pulse-soft' : 'bg-ink-faint',
+      ]}
+      aria-hidden="true"
+    >
+    </span>
+    <span class="eyebrow">
+      {isLive ? 'Live · The experiment is running' : 'Pre-launch · Counter starts May 2'}
+    </span>
+    <span class="eyebrow text-ink-faint hidden md:inline">
+      · Updated {p.lastUpdatedRelative}
+    </span>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16">
+    <div>
+      <p class="eyebrow mb-4">Day</p>
+      <p class="data text-7xl md:text-8xl font-medium leading-none tracking-tightest">
+        <span class="text-ink">{p.dayCurrent}</span>
+        <span class="text-ink-faint"> / {p.dayTotal}</span>
+      </p>
+      <div class="mt-6 h-1 bg-paper-line overflow-hidden">
+        <div
+          class="h-full bg-ink"
+          style={`width: ${p.dayPercent}%`}
+          aria-hidden="true"
+        >
+        </div>
+      </div>
+      <p class="mt-3 font-mono text-xs text-ink-muted">
+        {p.dayPercent}% · {p.remainingDays} {p.remainingDays === 1 ? 'day' : 'days'} remaining
+      </p>
+    </div>
+
+    <div>
+      <p class="eyebrow mb-4">Conversations</p>
+      <p class="data text-7xl md:text-8xl font-medium leading-none tracking-tightest">
+        <span class="text-ink">{p.callsComplete}</span>
+        <span class="text-ink-faint"> / {p.callsTarget}</span>
+      </p>
+      <div class="mt-6 h-1 bg-paper-line overflow-hidden">
+        <div
+          class="h-full bg-ink"
+          style={`width: ${p.callsPercent}%`}
+          aria-hidden="true"
+        >
+        </div>
+      </div>
+      <p class="mt-3 font-mono text-xs text-ink-muted">
+        {p.callsPercent}% · {p.callsTarget - p.callsComplete} to go
+        {p.pilotsBooked > 0 && (
+          <span> · <span class="text-signal">{p.pilotsBooked} pilots booked</span></span>
+        )}
+      </p>
+    </div>
+  </div>
+</section>
