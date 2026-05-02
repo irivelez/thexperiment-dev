@@ -25,11 +25,6 @@ export const SITE = {
   },
   cta: {
     booking: 'https://cal.com/thexperiment/40min',
-    whatsapp:
-      'https://wa.me/?text=' +
-      encodeURIComponent(
-        'Hola, vengo de thexperiment.dev — quiero agendar una conversación de 40 min sobre cómo opero mi negocio en WhatsApp.'
-      ),
   },
   legal: {
     entity: 'Trynoa Inc.',
