@@ -1,0 +1,83 @@
+---
+/**
+ * PatternsEmerging — the section VC reviewers will screenshot.
+ * Reads /content/patterns.json. Manually curated by /publish-diary
+ * (or directly during weekly pattern review).
+ */
+import patterns from '../../content/patterns.json';
+
+type Status = 'pending' | 'early-signal' | 'confirmed' | 'contradicted';
+
+interface Pattern {
+  text: string;
+  status: Status;
+  count: number;
+  verticals: string[];
+}
+
+const items: Pattern[] = patterns.patterns as Pattern[];
+
+const statusLabel: Record<Status, string> = {
+  'pending': 'Pending',
+  'early-signal': 'Early signal',
+  'confirmed': 'Confirmed',
+  'contradicted': 'Contradicted',
+};
+
+const statusColor: Record<Status, string> = {
+  'pending': 'text-ink-faint border-ink-faint',
+  'early-signal': 'text-signal border-signal',
+  'confirmed': 'text-ink border-ink',
+  'contradicted': 'text-ink-muted border-ink-muted line-through',
+};
+---
+
+<section class="section" aria-labelledby="patterns-heading">
+  <div class="container-page">
+    <div class="flex items-baseline justify-between mb-10 gap-6">
+      <h2 id="patterns-heading">What I'm hearing</h2>
+      <p class="eyebrow text-right">
+        Updated every 2 days · {patterns.lastUpdated}
+      </p>
+    </div>
+
+    <ol class="space-y-8">
+      {
+        items.map((pattern, i) => (
+          <li class="grid grid-cols-[auto_1fr] gap-4 md:gap-6 items-baseline">
+            <span class="data text-sm text-ink-faint pt-1">
+              {String(i + 1).padStart(2, '0')}
+            </span>
+            <div class="space-y-2">
+              <p class="text-lg md:text-xl text-ink leading-snug max-w-reading">
+                {pattern.text}
+              </p>
+              <div class="flex flex-wrap items-center gap-3 text-2xs font-mono">
+                <span class:list={['inline-flex px-2 py-0.5 border', statusColor[pattern.status]]}>
+                  {statusLabel[pattern.status]}
+                </span>
+                {pattern.count > 0 && (
+                  <span class="text-ink-muted">
+                    Mentioned in <span class="data text-ink">{pattern.count}</span> {pattern.count === 1 ? 'call' : 'calls'}
+                  </span>
+                )}
+                {pattern.verticals.length > 0 && (
+                  <span class="text-ink-muted">
+                    · across {pattern.verticals.join(', ')}
+                  </span>
+                )}
+              </div>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+
+    <p class="mt-12 text-sm text-ink-muted max-w-reading">
+      Patterns sharpen across calls. <span class="text-signal">Early signal</span> at 1-2 mentions;
+      <span class="text-ink">confirmed</span> at 3+ across 2+ verticals; <span class="line-through">contradicted</span> when later
+      conversations break the original signal. The day-8 review re-segments
+      if patterns aren't crystallizing.
+    </p>
+  </div>
+</section>
