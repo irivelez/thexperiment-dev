@@ -1,0 +1,10 @@
+# content/interviews/
+
+Private capture layer. Full transcripts and structured field extractions.
+
+This directory is **gitignored**. Files here never leave local. Only anonymized,
+permission-cleared content (curated into /diary, /patterns, /quotes) reaches
+the public site.
+
+The /log-call skill writes one file per conversation here:
+  `YYYY-MM-DD_vertical_NN.md`
