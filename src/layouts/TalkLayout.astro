@@ -1,0 +1,147 @@
+---
+/**
+ * TalkLayout — dark cosmic shell for /talk.
+ *
+ * Why a dedicated layout (instead of reusing Base):
+ *   /talk is a focused conversion surface for traffic from LinkedIn / TikTok /
+ *   WhatsApp. The visitor's only meaningful next step is booking with Irina.
+ *   Site-wide nav (diary, method, POV, about) is a distraction here — every
+ *   exit from the page that isn't "book Irina" is a leak. So this layout has
+ *   a minimal footer and no nav; the conversion engine is the page.
+ */
+import '../styles/global.css';
+import { SITE } from '@lib/constants';
+
+interface Props {
+  title?: string;
+  description?: string;
+  ogImage?: string;
+  noindex?: boolean;
+  lang?: 'es' | 'en';
+}
+
+const {
+  title,
+  description = SITE.description,
+  ogImage = '/og.svg',
+  noindex = false,
+  lang = 'es',
+} = Astro.props;
+
+const fullTitle = title ? `${title} — ${SITE.name}` : SITE.name;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site).toString();
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL} />
+
+    {noindex && <meta name="robots" content="noindex" />}
+
+    {/* Open Graph */}
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={new URL(ogImage, Astro.site)} />
+    <meta property="og:site_name" content={SITE.name} />
+
+    {/* Twitter */}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content={canonicalURL} />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={new URL(ogImage, Astro.site)} />
+
+    {/* Cosmic theme */}
+    <meta name="theme-color" content="#05060a" />
+
+    {/* Preconnect for the globe assets so first paint of the WebGL feels instant. */}
+    <link rel="preconnect" href="https://unpkg.com" crossorigin />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+  </head>
+
+  <body class="min-h-screen flex flex-col cosmic-bg text-white antialiased">
+    {/* Star field — subtle, layered behind everything. CSS-only, no extra requests. */}
+    <div class="cosmic-stars" aria-hidden="true"></div>
+    <div class="cosmic-glow" aria-hidden="true"></div>
+
+    <main class="flex-1 relative z-10">
+      <slot />
+    </main>
+
+    {/* Minimal footer — single line, brand mark + escape hatch home. */}
+    <footer class="relative z-10 border-t border-white/5 mt-12">
+      <div class="max-w-page mx-auto px-6 md:px-10 py-6 flex flex-col md:flex-row gap-2 md:items-center md:justify-between text-2xs font-mono text-white/40">
+        <a href="/" class="no-underline hover:text-white/70">{SITE.domain}</a>
+        <span>{SITE.legal.entity} · © {new Date().getFullYear()}</span>
+      </div>
+    </footer>
+
+    <style is:global>
+      /* Cosmic background — a deep navy with a soft top-down gradient.
+         Hex chosen so the orange signal (#f97316) reads vivid against it. */
+      .cosmic-bg {
+        background:
+          radial-gradient(ellipse 80% 50% at 50% -10%, rgba(249, 115, 22, 0.10), transparent 60%),
+          radial-gradient(ellipse 60% 40% at 50% 110%, rgba(59, 130, 246, 0.06), transparent 60%),
+          linear-gradient(180deg, #05060a 0%, #06080f 60%, #04050a 100%);
+        background-attachment: fixed;
+      }
+
+      /* Star field. Two layers of tiny radial dots, parallax-free.
+         Generated via CSS — no images, no requests. */
+      .cosmic-stars {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        background-image:
+          radial-gradient(1px 1px at 20% 30%, rgba(255, 255, 255, 0.55), transparent 60%),
+          radial-gradient(1px 1px at 80% 10%, rgba(255, 255, 255, 0.4), transparent 60%),
+          radial-gradient(1px 1px at 60% 70%, rgba(255, 255, 255, 0.5), transparent 60%),
+          radial-gradient(1.5px 1.5px at 40% 80%, rgba(255, 255, 255, 0.35), transparent 60%),
+          radial-gradient(1px 1px at 10% 60%, rgba(255, 255, 255, 0.3), transparent 60%),
+          radial-gradient(1px 1px at 90% 50%, rgba(255, 255, 255, 0.45), transparent 60%),
+          radial-gradient(1px 1px at 30% 15%, rgba(255, 255, 255, 0.35), transparent 60%),
+          radial-gradient(1px 1px at 70% 35%, rgba(255, 255, 255, 0.4), transparent 60%),
+          radial-gradient(1px 1px at 50% 90%, rgba(255, 255, 255, 0.35), transparent 60%),
+          radial-gradient(1px 1px at 15% 85%, rgba(255, 255, 255, 0.3), transparent 60%);
+        background-size: 100% 100%;
+        opacity: 0.7;
+      }
+
+      /* Soft signal-orange aurora top, mirrors the atmosphere of the globe. */
+      .cosmic-glow {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        background: radial-gradient(
+          ellipse 90% 35% at 50% 0%,
+          rgba(249, 115, 22, 0.07) 0%,
+          transparent 70%
+        );
+      }
+
+      /* Selection on dark. */
+      .cosmic-bg ::selection {
+        background: #f97316;
+        color: #ffffff;
+      }
+
+      /* Reset link underline default to fit dark editorial feel. */
+      .cosmic-bg a {
+        text-decoration: none;
+      }
+    </style>
+  </body>
+</html>
