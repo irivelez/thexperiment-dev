@@ -228,6 +228,16 @@ function parseTokens(s: string): { tok: string; accent: boolean }[] {
           aria-label="Enviar"
         >→</button>
       </form>
+
+      {/* Privacy disclosure at the point of collection.
+          Required by Ley 1581/2012 art. 17(k) + Decreto 1377/2013 art. 13:
+          the titular must have visibility on processing terms before submitting
+          data. Placed below the composer so it stays visible while the user is
+          typing, in the same micro-monotype as the rest of the page's labels. */}
+      <p class="ari-disclosure">
+        Procesado por Claude (Anthropic). No entrena modelos.
+        <a href="/privacy">Privacidad</a>.
+      </p>
     </section>
 
   </main>
@@ -727,6 +737,30 @@ function parseTokens(s: string): { tok: string; accent: boolean }[] {
       cursor: not-allowed;
     }
 
+    /* Privacy disclosure under composer. Same micro-mono register as the
+       transmission and Ari-tag labels — informational, not defensive. The
+       link to /privacy is the legal exit; the rest of the line states the
+       processing fact (Claude API + no training) so the visitor knows
+       before submitting what happens to their words. */
+    .ari-disclosure {
+      margin-top: 12px;
+      font-family: ui-monospace, "SF Mono", Menlo, monospace;
+      font-size: 10px;
+      line-height: 1.5;
+      letter-spacing: 0.04em;
+      color: rgba(255,255,255,0.35);
+      opacity: 0;
+      transition: opacity 600ms ease 1300ms;
+    }
+    .ari.show .ari-disclosure { opacity: 1; }
+    .ari-disclosure a {
+      color: rgba(255,255,255,0.55);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      transition: color 150ms;
+    }
+    .ari-disclosure a:hover { color: #fb923c; }
+
     /* Sticky CTA */
     .cta-sticky {
       position: fixed;
@@ -853,7 +887,7 @@ function parseTokens(s: string): { tok: string; accent: boolean }[] {
       // they've already seen it. Reduced-motion users: also skip.
       const hasPriorChat = (() => {
         try {
-          const raw = localStorage.getItem('thexperiment.ari.v1');
+          const raw = localStorage.getItem('thexperiment.ari.v2');
           if (!raw) return false;
           const parsed = JSON.parse(raw);
           return Array.isArray(parsed.messages) && parsed.messages.length > 1;
@@ -876,7 +910,10 @@ function parseTokens(s: string): { tok: string; accent: boolean }[] {
     (function ariChat() {
       const BRIEF_OPEN = '<<<BRIEF';
       const BRIEF_CLOSE = 'BRIEF>>>';
-      const STORAGE_KEY = 'thexperiment.ari.v1';
+      // v2 — bumped 2026-05-04 to invalidate all prior dev/test conversations
+      // before public launch. Every browser starts fresh on the first visit
+      // after this deploy.
+      const STORAGE_KEY = 'thexperiment.ari.v2';
       const MAX_INPUT_LEN = 1500;
 
       // Seed mirrors the SSR'd HTML AND TURN-1 in src/lib/ari-prompt.ts.
