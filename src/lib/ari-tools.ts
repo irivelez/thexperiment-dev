@@ -121,6 +121,17 @@ function normalizeUrl(raw: string): URL | null {
  * and a chunk of visible text out of an HTML string. We don't bring in a DOM
  * parser — these regexes are good enough for marketing sites and keep the
  * function light enough to cold-start fast.
+ *
+ * Two-pass text extraction:
+ *   1. Standard pass — strip <script>/<style>, collapse remaining tags. This
+ *      is what works for normal marketing sites.
+ *   2. Encoded-HTML pass — many JS-rendered platforms (Google Sites is the
+ *      common one in LATAM, but also React/Vue SSR snapshots) embed the
+ *      rendered DOM as HTML-entity-encoded strings inside <script> data.
+ *      We scan the raw HTML for runs of `&lt;...&gt;` markup, decode them,
+ *      and harvest the inner text. Without this pass redin.com.co (Google
+ *      Sites) returns empty content even though the page text is right
+ *      there in the response, just escaped.
  */
 function extractFromHtml(html: string): {
   title: string | null;
@@ -140,8 +151,8 @@ function extractFromHtml(html: string): {
     /<meta[^>]+property=["']og:description["'][^>]*content=["']([^"']+)["']/i,
   );
 
-  // Strip <script> and <style> blocks, then collapse all tags to spaces.
-  const cleaned = html
+  // Pass 1 — strip <script> and <style>, then collapse remaining tags.
+  const standardText = html
     .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, ' ')
     .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, ' ')
     .replace(/<noscript\b[^>]*>[\s\S]*?<\/noscript>/gi, ' ')
@@ -156,13 +167,81 @@ function extractFromHtml(html: string): {
     .replace(/\s+/g, ' ')
     .trim();
 
+  // Pass 2 — harvest text from HTML-entity-encoded markup embedded inside
+  // JS data structures. Looks for sequences like `&lt;p&gt;TEXT&lt;/p&gt;`
+  // and decodes/strips them. The threshold is 40 chars so we only kick in
+  // when the standard pass came up short.
+  let combined = standardText;
+  if (standardText.length < 400) {
+    const harvested = harvestEncodedHtml(html);
+    if (harvested.length > 0) {
+      combined = (standardText + ' ' + harvested).trim().replace(/\s+/g, ' ');
+    }
+  }
+
   return {
     title: titleMatch ? decodeEntities(titleMatch[1]).trim() : null,
     description: descMatch ? decodeEntities(descMatch[1]).trim() : null,
     og_title: ogTitleMatch ? decodeEntities(ogTitleMatch[1]).trim() : null,
     og_description: ogDescMatch ? decodeEntities(ogDescMatch[1]).trim() : null,
-    text_snippet: cleaned.slice(0, TEXT_SNIPPET_CHARS),
+    text_snippet: combined.slice(0, TEXT_SNIPPET_CHARS),
   };
+}
+
+/**
+ * Harvest visible text from HTML-entity-encoded markup embedded directly
+ * in the body. Google Sites and some SSR snapshots write rendered HTML as
+ * `&lt;p class=&quot;...&quot;&gt;TEXT&lt;/p&gt;` runs sitting inside JS data
+ * blobs — no clean JS-string wrapping. We don't need the wrapper; we just
+ * scan the whole body for encoded text-bearing elements and pull their inner
+ * content out.
+ *
+ * Approach: decode HTML entities globally, then look for content inside
+ * common text-bearing tags (p, h1-h6, span, li, a, td, div). Cap total
+ * harvested text at 2x the snippet budget so a long-form site can't run away.
+ */
+function harvestEncodedHtml(html: string): string {
+  // We only care about runs that contain encoded markup. Bail fast if the
+  // body has no `&lt;` at all.
+  if (!html.includes('&lt;')) return '';
+
+  // Decode just the HTML entities. We deliberately do NOT touch JS escapes
+  // (\\n, \\u003c) because the encoded markup we want lives in raw entities,
+  // and JS escapes belong to the bytecode around it which we'll discard.
+  const decoded = decodeEntities(html);
+
+  const out: string[] = [];
+  let total = 0;
+  // Match common text-bearing elements: tag name, optional attributes, then
+  // a chunk of inner content up to the closing tag. Lazy match on the
+  // content keeps each capture small.
+  const re = /<(p|h[1-6]|span|li|a|td|div|article|section)\b[^>]{0,400}>([^<]{2,800})<\/\1>/gi;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(decoded)) !== null) {
+    const text = m[2].replace(/\s+/g, ' ').trim();
+    // Skip empty / single-char / structural-only fragments.
+    if (text.length < 4) continue;
+    // Skip obvious JS code fragments and CSS class soup.
+    if (/^[a-z0-9_$.]+\s*\(/i.test(text)) continue;
+    if (/^[a-z0-9-]+(\s+[a-z0-9-]+)+$/.test(text) && !/[áéíóúñ]/i.test(text)) continue;
+    // Need at least one letter (rules out pure punctuation / numbers).
+    if (!/[a-záéíóúñ]/i.test(text)) continue;
+    out.push(text);
+    total += text.length;
+    if (total >= TEXT_SNIPPET_CHARS * 2) break;
+  }
+
+  // Dedupe by first-60-char key. Many pages repeat the same heading/copy
+  // across multiple breakpoints.
+  const seen = new Set<string>();
+  const deduped: string[] = [];
+  for (const s of out) {
+    const key = s.slice(0, 60).toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    deduped.push(s);
+  }
+  return deduped.join(' · ').slice(0, TEXT_SNIPPET_CHARS * 2);
 }
 
 function decodeEntities(s: string): string {
