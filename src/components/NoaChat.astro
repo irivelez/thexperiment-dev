@@ -1,0 +1,420 @@
+---
+/**
+ * NoaChat — the live discovery agent embedded on /talk.
+ *
+ * Mobile-first, vanilla TS + streaming SSE consumer. The agent is /api/chat
+ * (Anthropic Sonnet under the hood). Frontend job:
+ *   - render assistant + user messages as a thread
+ *   - parse the <<<BRIEF…BRIEF>>> block when it arrives
+ *   - swap the input row for a Cal.com handoff CTA, prefilled with the
+ *     name we extracted from the brief
+ *   - persist the conversation + brief in localStorage so a refresh keeps
+ *     state (these conversations matter to Irina)
+ *
+ * Spanish-first opening; the agent itself adapts to the user's language
+ * from message #2 onwards.
+ */
+import { SITE } from '@lib/constants';
+
+const calBase = SITE.cta.booking;
+---
+
+<section id="noa-chat" class="border border-paper-line bg-paper" data-cal={calBase}>
+  <header class="flex items-center justify-between border-b border-paper-line px-5 py-3">
+    <div class="flex items-center gap-3">
+      <span
+        class="inline-block w-2 h-2 rounded-full bg-signal animate-pulse-soft"
+        aria-hidden="true"></span>
+      <span class="font-mono text-2xs uppercase tracking-[0.18em] text-ink-subtle">
+        Noa · agente de Irina
+      </span>
+    </div>
+    <button
+      type="button"
+      id="noa-reset"
+      class="font-mono text-2xs uppercase tracking-[0.18em] text-ink-faint hover:text-ink"
+      aria-label="Reset conversation"
+    >
+      Reset
+    </button>
+  </header>
+
+  <div
+    id="noa-messages"
+    class="flex flex-col gap-4 px-5 py-6 min-h-[440px] max-h-[60vh] overflow-y-auto"
+    aria-live="polite"
+    aria-label="Conversation with Noa"
+  >
+    <!-- Seeded opening turn so the page doesn't sit silent -->
+    <div class="msg assistant">
+      <p>Hola — soy Noa, el agente de Irina.</p>
+      <p class="mt-2">
+        Voy a robarte 4 minutos antes de tu llamada con ella, para que cuando se sienten ya esté al día con tu negocio.
+      </p>
+      <p class="mt-2">
+        Contame: ¿a qué se dedica tu empresa, en qué ciudad, y cuántas personas tenés en campo?
+      </p>
+    </div>
+  </div>
+
+  <div id="noa-brief" class="hidden border-t border-paper-line bg-paper-subtle px-5 py-5">
+    <p class="eyebrow mb-3">Brief para Irina · listo</p>
+    <div id="noa-brief-body" class="font-mono text-xs text-ink-subtle leading-relaxed"></div>
+  </div>
+
+  <div id="noa-handoff" class="hidden border-t border-paper-line px-5 py-5">
+    <p class="eyebrow mb-2">Si querés ir más a fondo</p>
+    <a
+      id="noa-cal-link"
+      href={calBase}
+      target="_blank"
+      rel="noopener"
+      class="block w-full text-center px-5 py-4 bg-ink text-paper hover:bg-signal no-underline transition-colors font-mono text-sm tracking-wide"
+    >
+      Reservar 40 minutos con Irina →
+    </a>
+    <p class="font-mono text-2xs text-ink-muted mt-3 text-center">
+      40 min · gratis · sin pitch · anonimizada en todo lo que publica
+    </p>
+  </div>
+
+  <form
+    id="noa-form"
+    class="border-t border-paper-line flex items-end gap-3 px-4 py-3"
+  >
+    <textarea
+      id="noa-input"
+      rows="1"
+      placeholder="Escribí tu respuesta…"
+      class="flex-1 resize-none bg-transparent border-0 outline-none focus:ring-0 text-base text-ink placeholder:text-ink-faint font-sans leading-relaxed py-2 max-h-32"
+      aria-label="Tu mensaje"></textarea>
+    <button
+      type="submit"
+      id="noa-send"
+      class="shrink-0 px-4 py-2 bg-ink text-paper hover:bg-signal disabled:bg-ink-faint disabled:cursor-not-allowed transition-colors font-mono text-sm tracking-wide"
+      aria-label="Enviar"
+    >
+      →
+    </button>
+  </form>
+</section>
+
+<script>
+  // ---------- Constants & types ----------
+  const BRIEF_OPEN = '<<<BRIEF';
+  const BRIEF_CLOSE = 'BRIEF>>>';
+  const STORAGE_KEY = 'thexperiment.noa.v1';
+  const MAX_INPUT_LEN = 1500;
+
+  // The opening turn lives here AND in the SSR'd HTML below. The HTML version
+  // is what no-JS visitors see; this version is what gets threaded into the
+  // /api/chat call so the model knows it already greeted (and doesn't re-greet).
+  const SEED_OPENING =
+    'Hola — soy Noa, el agente de Irina.\n\nVoy a robarte 4 minutos antes de tu llamada con ella, para que cuando se sienten ya esté al día con tu negocio.\n\nContame: ¿a qué se dedica tu empresa, en qué ciudad, y cuántas personas tenés en campo?';
+
+  type Role = 'user' | 'assistant';
+  interface Msg { role: Role; content: string }
+  interface Brief {
+    company?: string;
+    city?: string;
+    country?: string;
+    team_size?: string;
+    vertical?: string;
+    pain_verbatim?: string;
+    pain_structured?: string;
+    current_stack?: string;
+    past_spend?: string;
+    aspiration?: string;
+    language?: string;
+    qualification?: { will_embrace: number; will_pay: number; band: string; reasoning: string };
+    irinas_first_question?: string;
+    user_first_name?: string;
+  }
+  interface Persisted { messages: Msg[]; brief?: Brief }
+
+  // ---------- Element handles ----------
+  const root = document.getElementById('noa-chat')!;
+  const calBase = root.dataset.cal!;
+  const msgList = document.getElementById('noa-messages')!;
+  const briefBox = document.getElementById('noa-brief')!;
+  const briefBody = document.getElementById('noa-brief-body')!;
+  const handoff = document.getElementById('noa-handoff')!;
+  const calLink = document.getElementById('noa-cal-link') as HTMLAnchorElement;
+  const form = document.getElementById('noa-form') as HTMLFormElement;
+  const input = document.getElementById('noa-input') as HTMLTextAreaElement;
+  const sendBtn = document.getElementById('noa-send') as HTMLButtonElement;
+  const resetBtn = document.getElementById('noa-reset') as HTMLButtonElement;
+
+  // ---------- State ----------
+  let messages: Msg[] = [];
+  let brief: Brief | undefined;
+  let inFlight = false;
+
+  function persist() {
+    try {
+      const data: Persisted = { messages, brief };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    } catch { /* ignore quota / privacy errors */ }
+  }
+  function restore(): Persisted | null {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) as Persisted : null;
+    } catch { return null }
+  }
+
+  // ---------- Render helpers ----------
+  function escapeHtml(s: string): string {
+    const div = document.createElement('div');
+    div.textContent = s;
+    return div.innerHTML;
+  }
+  function paragraphs(s: string): string {
+    return s
+      .split(/\n{2,}/)
+      .map((p) => `<p>${escapeHtml(p).replace(/\n/g, '<br/>')}</p>`)
+      .join('');
+  }
+  function appendMessage(role: Role, content: string): HTMLDivElement {
+    const div = document.createElement('div');
+    div.className = `msg ${role}`;
+    div.innerHTML = paragraphs(content);
+    msgList.appendChild(div);
+    msgList.scrollTop = msgList.scrollHeight;
+    return div;
+  }
+  function rerender() {
+    msgList.innerHTML = '';
+    for (const m of messages) appendMessage(m.role, m.content);
+    if (brief) renderBrief(brief);
+  }
+
+  function renderBrief(b: Brief) {
+    const lines = [
+      ['Empresa', b.company],
+      ['Ciudad', [b.city, b.country].filter(Boolean).join(', ')],
+      ['Equipo', b.team_size],
+      ['Vertical', b.vertical],
+      ['Dolor', b.pain_verbatim],
+      ['Cómo lo hace hoy', b.current_stack],
+      ['Probó', b.past_spend],
+      ['Quiere', b.aspiration],
+      ['Banda', b.qualification?.band],
+    ].filter(([, v]) => v && String(v).trim().length > 0);
+    briefBody.innerHTML = lines
+      .map(([k, v]) => `<div><span class="text-ink-faint">${k}: </span><span class="text-ink">${escapeHtml(String(v))}</span></div>`)
+      .join('');
+    briefBox.classList.remove('hidden');
+    handoff.classList.remove('hidden');
+
+    // Prefill Cal.com link with name + a 1-line synthesis in notes.
+    // Cap notes around 400 chars so the URL stays sane on mobile shares.
+    const trim = (s: string | undefined, n: number): string =>
+      (s || '').trim().slice(0, n);
+    const name = trim(b.user_first_name, 40);
+    const company = trim(b.company, 60);
+    const noteParts = [
+      company && `Empresa: ${company}`,
+      trim(b.team_size, 30) && `Equipo: ${trim(b.team_size, 30)}`,
+      trim(b.pain_verbatim, 140) && `Dolor: ${trim(b.pain_verbatim, 140)}`,
+      trim(b.current_stack, 60) && `Hoy: ${trim(b.current_stack, 60)}`,
+      trim(b.past_spend, 60) && `Probó: ${trim(b.past_spend, 60)}`,
+    ].filter(Boolean);
+    const url = new URL(calBase);
+    if (name) url.searchParams.set('name', name);
+    if (noteParts.length > 0) url.searchParams.set('notes', noteParts.join(' · '));
+    calLink.href = url.toString();
+
+    // Fire-and-forget: persist the brief server-side so Irina can monitor
+    // the funnel via `vercel logs`. Errors here are silent — the user's
+    // experience never depends on this call.
+    void fetch('/api/brief', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ brief: b, ts: new Date().toISOString() }),
+      keepalive: true,
+    }).catch(() => { /* swallow */ });
+
+    // Hide the input form once the brief lands; agent is done.
+    form.classList.add('hidden');
+  }
+
+  function tryExtractBrief(text: string): { plain: string; brief?: Brief } {
+    const startIdx = text.indexOf(BRIEF_OPEN);
+    if (startIdx === -1) return { plain: text };
+    const afterStart = text.slice(startIdx + BRIEF_OPEN.length);
+    const closeIdx = afterStart.indexOf(BRIEF_CLOSE);
+    if (closeIdx === -1) {
+      // Brief is mid-stream; hide it from the user, show the rest
+      return { plain: text.slice(0, startIdx).trimEnd() };
+    }
+    const jsonRaw = afterStart.slice(0, closeIdx).trim();
+    const tail = afterStart.slice(closeIdx + BRIEF_CLOSE.length);
+    let parsed: Brief | undefined;
+    try {
+      parsed = JSON.parse(jsonRaw) as Brief;
+    } catch {
+      try {
+        // Strip code fences if the model wrapped JSON
+        const cleaned = jsonRaw.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '');
+        parsed = JSON.parse(cleaned) as Brief;
+      } catch { /* leave undefined; show brief markers stripped */ }
+    }
+    const plain = (text.slice(0, startIdx) + tail).trim();
+    return { plain, brief: parsed };
+  }
+
+  // ---------- Auto-grow textarea ----------
+  function autoGrow() {
+    input.style.height = 'auto';
+    input.style.height = Math.min(input.scrollHeight, 128) + 'px';
+  }
+  input.addEventListener('input', autoGrow);
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      form.requestSubmit();
+    }
+  });
+
+  // ---------- Reset ----------
+  resetBtn.addEventListener('click', () => {
+    if (!confirm('¿Borrar la conversación y empezar de nuevo?')) return;
+    localStorage.removeItem(STORAGE_KEY);
+    messages = [{ role: 'assistant', content: SEED_OPENING }];
+    brief = undefined;
+    briefBox.classList.add('hidden');
+    handoff.classList.add('hidden');
+    form.classList.remove('hidden');
+    rerender();
+    persist();
+  });
+
+  // ---------- Submit / streaming ----------
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (inFlight) return;
+    const text = input.value.trim();
+    if (!text || text.length > MAX_INPUT_LEN) return;
+
+    messages.push({ role: 'user', content: text });
+    appendMessage('user', text);
+    input.value = '';
+    autoGrow();
+    persist();
+
+    const assistantDiv = appendMessage('assistant', '');
+    assistantDiv.classList.add('streaming');
+    let assistantText = '';
+
+    inFlight = true;
+    sendBtn.disabled = true;
+    input.disabled = true;
+
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages }),
+      });
+      if (!res.ok || !res.body) {
+        const errBody = await res.json().catch(() => ({ error: 'request_failed' }));
+        const msg = errBody.message || errBody.error || 'Algo falló del lado del servidor.';
+        assistantDiv.innerHTML = paragraphs(`(error) ${msg}`);
+        return;
+      }
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buf = '';
+      // eslint-disable-next-line no-constant-condition
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        buf += decoder.decode(value, { stream: true });
+        let idx;
+        while ((idx = buf.indexOf('\n\n')) !== -1) {
+          const frame = buf.slice(0, idx);
+          buf = buf.slice(idx + 2);
+          if (!frame.startsWith('data: ')) continue;
+          const payload = frame.slice(6);
+          if (payload === '[DONE]') continue;
+          try {
+            const ev = JSON.parse(payload);
+            if (ev.type === 'delta' && typeof ev.text === 'string') {
+              assistantText += ev.text;
+              const { plain } = tryExtractBrief(assistantText);
+              assistantDiv.innerHTML = paragraphs(plain);
+              msgList.scrollTop = msgList.scrollHeight;
+            } else if (ev.type === 'error') {
+              assistantText += `\n\n(error) ${ev.message}`;
+              assistantDiv.innerHTML = paragraphs(assistantText);
+            }
+          } catch { /* ignore malformed frame */ }
+        }
+      }
+
+      const { plain, brief: parsedBrief } = tryExtractBrief(assistantText);
+      assistantDiv.innerHTML = paragraphs(plain || '(silencio)');
+      assistantDiv.classList.remove('streaming');
+      messages.push({ role: 'assistant', content: plain });
+      if (parsedBrief) {
+        brief = parsedBrief;
+        renderBrief(parsedBrief);
+      }
+      persist();
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      assistantDiv.innerHTML = paragraphs(`(network error) ${msg}`);
+    } finally {
+      inFlight = false;
+      sendBtn.disabled = false;
+      input.disabled = false;
+      input.focus();
+    }
+  });
+
+  // ---------- Boot ----------
+  (function boot() {
+    const restored = restore();
+    if (restored && Array.isArray(restored.messages) && restored.messages.length > 0) {
+      messages = restored.messages;
+      brief = restored.brief;
+      rerender();
+    } else {
+      // First load: seed the conversation with Noa's opening turn so the
+      // model has it as context once the user sends their first reply.
+      messages = [{ role: 'assistant', content: SEED_OPENING }];
+      // Don't rerender: SSR HTML already shows the seed message visually.
+      persist();
+    }
+    autoGrow();
+  })();
+</script>
+
+<style>
+  #noa-chat .msg {
+    @apply text-base leading-relaxed text-ink-subtle font-sans;
+    max-width: 92%;
+  }
+  #noa-chat .msg.assistant {
+    @apply self-start;
+  }
+  #noa-chat .msg.user {
+    @apply self-end bg-paper-subtle border border-paper-line px-4 py-3;
+    color: #0a0a0a;
+  }
+  #noa-chat .msg.user p {
+    @apply text-ink;
+  }
+  #noa-chat .msg.assistant p + p,
+  #noa-chat .msg.user p + p {
+    @apply mt-2;
+  }
+  #noa-chat .msg.streaming::after {
+    content: '▍';
+    @apply text-signal animate-pulse-soft ml-1;
+  }
+  #noa-messages {
+    scroll-behavior: smooth;
+  }
+</style>
