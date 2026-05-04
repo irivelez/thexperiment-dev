@@ -1,0 +1,343 @@
+---
+/**
+ * /privacy — Política de Privacidad / Privacy notice.
+ *
+ * Posture: SF-startup style (Linear / Vercel / Anthropic cadence) translated
+ * to LATAM compliance. Spanish is canonical and legally binding for the data
+ * subjects who actually trigger this notice (Colombian Ley 1581/2012,
+ * Mexican LFPDPPP, Brazilian LGPD, Peruvian Ley 29733, plus Argentina /
+ * Chile / Ecuador equivalents). English is a tight summary for YC /
+ * Speedrun reviewers and English-speaking visitors, not a full mirror —
+ * less duplication, less drift, less maintenance.
+ *
+ * Subprocessor approach: the AI transcription tool for the 40-min calls is
+ * still being chosen, so the policy lists it as a category ("herramienta de
+ * transcripción con IA") with a hard "no training on call data" requirement,
+ * and commits to updating this section once the vendor is finalized. This
+ * mirrors how SF SaaS startups disclose subprocessors in flux (vs. naming a
+ * specific tool prematurely and having to amend the policy when it changes).
+ *
+ * Compliance shortcuts taken (intentional, sprint-stage):
+ *   - SIC RNBD database registration NOT required (Deltanova SAS is below
+ *     the 100,000 UVT asset threshold of Decreto 1377 art. 25).
+ *   - International transfers to US-based subprocessors covered by SIC
+ *     Circular Externa 005 de 2017 (US is on the adequate-protection list);
+ *     no model contracts or data-transfer impact assessment needed.
+ *   - DPO / Encarregado not appointed (small-processor exemption across
+ *     LGPD ANPD Resolution Jan 2022, Ecuador LOPDP, Mexico LFPDPPP).
+ *   - No cookie consent banner (only functional localStorage, no analytics).
+ *   - No separate Terms of Service (not legally required pre-revenue).
+ *
+ * Voice: tú form, neutral LATAM, no voseo, no em-dashes, no defensive copy.
+ * First-person ("yo, Irina") to match the rest of the site's lab-notebook
+ * tone — feels personal, signals accountability, distinct from boilerplate.
+ */
+import Base from '@layouts/Base.astro';
+import { SITE } from '@lib/constants';
+
+const title = 'Privacidad · Privacy';
+const description =
+  'Política de privacidad para el experimento. Spanish is canonical for LATAM data subjects, English summary below for reviewers.';
+---
+
+<Base title={title} description={description} noindex={false}>
+  <section class="container-page py-16 md:py-24 max-w-reading">
+
+    <p class="eyebrow mb-4">Privacidad</p>
+    <h1>Tus datos, qué hago con ellos.</h1>
+
+    <p class="mt-6 text-sm font-mono text-ink-muted">
+      Última actualización: {SITE.legal.privacyUpdated}
+      <span class="mx-2">·</span>
+      Responsable: {SITE.legal.entity} ({SITE.legal.jurisdiction})
+      <span class="mx-2">·</span>
+      Contacto: <a href={`mailto:${SITE.legal.contact}`} class="text-ink hover:text-signal">{SITE.legal.contact}</a>
+    </p>
+
+    {/* ============================================================
+        SPANISH — canonical, legally binding for LATAM data subjects.
+        Structure follows the SF SaaS standard (Linear / Anthropic /
+        Vercel) translated to Habeas Data + LFPDPPP + LGPD requirements.
+        ============================================================ */}
+    <div class="mt-12 prose-body space-y-5" lang="es">
+
+      {/* TL;DR — SF-startup pattern: lead with the summary so the
+          visitor can leave in 30 seconds knowing the substance.
+          Detailed sections below answer "but how exactly?". */}
+      <div class="bg-paper-subtle border-l-2 border-signal pl-5 py-4 not-prose">
+        <p class="eyebrow !mb-2">Resumen</p>
+        <p class="text-base leading-relaxed text-ink">
+          Soy Irina Velez, fundadora de {SITE.legal.entity}. Durante este
+          experimento de 16 días recolecto datos tuyos solo para preparar y
+          conducir la conversación de 40 minutos. No te mando marketing, no
+          vendo data, y los temas que aparezcan los publico anonimizados,
+          sin nada que te identifique. Para cualquier petición sobre tus datos:
+          <a href={`mailto:${SITE.legal.contact}`} class="font-medium">{SITE.legal.contact}</a>.
+        </p>
+      </div>
+
+      <h2 class="!mt-12">1. Quién soy</h2>
+      <p>
+        <strong class="font-medium text-ink">{SITE.legal.entity}</strong>, sociedad
+        constituida en Colombia. Yo soy Irina Velez, fundadora, y soy la persona
+        responsable del tratamiento de tus datos durante el experimento (2 al
+        17 de mayo de 2026). Canal único para temas de datos:
+        <a href={`mailto:${SITE.legal.contact}`}>{SITE.legal.contact}</a>.
+      </p>
+
+      <h2 class="!mt-12">2. Qué recolecto</h2>
+      <p>Tres fuentes:</p>
+      <ul class="list-disc pl-6 space-y-2">
+        <li>
+          <strong class="font-medium text-ink">Chat en /talk con Ari.</strong>
+          Lo que escribes en el campo: nombre de tu empresa, sitio web,
+          servicios, ciudad, país, tamaño del equipo, primer nombre, y el
+          contenido libre de la conversación.
+        </li>
+        <li>
+          <strong class="font-medium text-ink">Reserva de llamada en Cal.com.</strong>
+          Tu nombre, email, hora elegida, y zona horaria.
+        </li>
+        <li>
+          <strong class="font-medium text-ink">Llamada de 40 minutos.</strong>
+          Notas escritas que tomo durante la conversación, más una transcripción
+          del audio generada por una herramienta de IA. No grabo video ni guardo
+          el audio como archivo separado, solo la transcripción de texto.
+          Confirmo esto verbalmente al inicio de cada llamada.
+        </li>
+      </ul>
+      <p>
+        En el servidor también quedan logs técnicos básicos (IP, navegador,
+        página visitada) por 30 días en Vercel para depurar errores. Tu
+        navegador guarda el historial del chat en
+        <code class="font-mono text-sm">localStorage</code>; eso vive en tu
+        equipo, no en mi servidor.
+      </p>
+
+      <h2 class="!mt-12">3. Para qué lo uso</h2>
+      <p><strong class="font-medium text-ink">Necesario:</strong></p>
+      <ul class="list-disc pl-6 space-y-2">
+        <li>Preparar y conducir la sesión de 40 minutos.</li>
+        <li>Comunicarme contigo sobre la cita.</li>
+        <li>Mantener la seguridad básica del sitio (logs).</li>
+      </ul>
+      <p><strong class="font-medium text-ink">Opcional, puedes oponerte por email:</strong></p>
+      <ul class="list-disc pl-6 space-y-2">
+        <li>Análisis interno de patrones para construir la tesis del experimento.</li>
+        <li>
+          Síntesis pública anonimizada en el diario diario de thexperiment.dev.
+          Anonimizar significa: sin tu nombre, sin el nombre de tu empresa,
+          sin ciudad específica, sin ningún detalle que te identifique.
+        </li>
+      </ul>
+      <p>
+        No marketing. No suscripciones por defecto. No venta de datos. Si en
+        el futuro quiero invitarte a algo, te lo pregunto explícitamente.
+      </p>
+
+      <h2 class="!mt-12">4. Base legal</h2>
+      <p>
+        Tu consentimiento al iniciar el chat o reservar la cita
+        (Ley 1581/2012 art. 9 Colombia, LFPDPPP art. 8 México, LGPD art. 7-I
+        Brasil, GDPR art. 6.1.a si aplica), más interés legítimo de la
+        investigación cuando aplica (LGPD art. 7-IX, GDPR art. 6.1.f).
+        Puedes revocar el consentimiento en cualquier momento sin afectar
+        el procesamiento previo.
+      </p>
+
+      <h2 class="!mt-12">5. Subprocesadores</h2>
+      <p>
+        Cuatro proveedores procesan datos en mi nombre, todos en Estados
+        Unidos. La Superintendencia de Industria y Comercio reconoce a EE.UU.
+        como jurisdicción con nivel adecuado de protección (Circular Externa
+        005 de 2017), por lo que la transferencia internacional es válida bajo
+        Ley 1581/2012 sin requisitos adicionales.
+      </p>
+      <ul class="list-disc pl-6 space-y-2">
+        <li>
+          <strong class="font-medium text-ink">Anthropic.</strong> Procesa el
+          chat con Claude. La API empresarial de Anthropic no entrena modelos
+          con la data que pasa por aquí y la retiene 30 días para detección
+          de abuso.
+          <a href="https://www.anthropic.com/legal/privacy" target="_blank" rel="noopener">anthropic.com/legal/privacy</a>
+        </li>
+        <li>
+          <strong class="font-medium text-ink">Vercel.</strong> Aloja el sitio
+          y guarda los logs técnicos.
+          <a href="https://vercel.com/legal/privacy-policy" target="_blank" rel="noopener">vercel.com/legal/privacy-policy</a>
+        </li>
+        <li>
+          <strong class="font-medium text-ink">Cal.com.</strong> Gestiona las
+          reservas de las llamadas de 40 minutos.
+          <a href="https://cal.com/privacy" target="_blank" rel="noopener">cal.com/privacy</a>
+        </li>
+        <li>
+          <strong class="font-medium text-ink">Herramienta de transcripción con IA.</strong>
+          Convierte el audio de la llamada en notas escritas. Estoy
+          finalizando la elección del proveedor específico. Requisito no
+          negociable para cualquier herramienta que use: no entrenar
+          modelos con la data de las llamadas. Cuando confirme el vendor,
+          actualizo esta sección con su nombre y enlace a su política.
+        </li>
+      </ul>
+      <p>
+        No vendo datos. No los comparto con anunciantes, brokers de datos,
+        ni nadie fuera de esta lista.
+      </p>
+
+      <h2 class="!mt-12">6. Cuánto tiempo guardo los datos</h2>
+      <ul class="list-disc pl-6 space-y-2">
+        <li><strong class="font-medium text-ink">Logs técnicos del servidor:</strong> 30 días.</li>
+        <li><strong class="font-medium text-ink">Conversaciones del chat, notas y transcripciones de las llamadas:</strong> hasta el 17 de noviembre de 2026 (cierre del sprint + 6 meses de análisis). Después se borran.</li>
+        <li><strong class="font-medium text-ink">Síntesis pública anonimizada:</strong> indefinida. No te identifica.</li>
+        <li><strong class="font-medium text-ink">localStorage en tu navegador:</strong> tú lo controlas con el botón "Reiniciar" del chat.</li>
+      </ul>
+      <p>
+        Si me pides borrar tus datos antes de esos plazos, lo hago en máximo
+        15 días hábiles.
+      </p>
+
+      <h2 class="!mt-12">7. Tus derechos</h2>
+      <p>
+        Bajo Ley 1581/2012 (Colombia), LFPDPPP (México), LGPD (Brasil),
+        Ley 29733 (Perú), y los regímenes equivalentes de Argentina, Chile y
+        Ecuador, puedes:
+      </p>
+      <ul class="list-disc pl-6 space-y-2">
+        <li><strong class="font-medium text-ink">Acceder</strong> a los datos que tengo de ti.</li>
+        <li><strong class="font-medium text-ink">Rectificar</strong> los que estén incorrectos.</li>
+        <li><strong class="font-medium text-ink">Cancelar o suprimir</strong> (que los borre).</li>
+        <li><strong class="font-medium text-ink">Oponerte</strong> a usos específicos como la síntesis pública o el análisis interno.</li>
+        <li><strong class="font-medium text-ink">Revocar</strong> tu consentimiento en cualquier momento.</li>
+        <li><strong class="font-medium text-ink">Portabilidad:</strong> que te entregue una copia estructurada de tus datos.</li>
+        <li><strong class="font-medium text-ink">Reclamar</strong> ante la SIC (Colombia, <a href="https://www.sic.gov.co" target="_blank" rel="noopener">sic.gov.co</a>) o la autoridad equivalente de tu país.</li>
+      </ul>
+      <p>
+        Para ejercer cualquiera: escribe a
+        <a href={`mailto:${SITE.legal.contact}`}>{SITE.legal.contact}</a>.
+        Respondo en máximo 10 días hábiles para consultas (acceso) y 15 días
+        hábiles para reclamos (rectificar, cancelar, revocar). Sin pago, sin
+        formularios, sin notarización.
+      </p>
+
+      <h2 class="!mt-12">8. Datos sensibles y menores</h2>
+      <p>
+        No te pido datos sensibles (salud, religión, opiniones políticas,
+        filiación sindical, biométricos, vida sexual). Si los compartes
+        voluntariamente, no los uso, no los publico, y los borro al final
+        del sprint.
+      </p>
+      <p>
+        Este experimento no está dirigido a menores de edad. Si tienes menos
+        de 18 años, no participes.
+      </p>
+
+      <h2 class="!mt-12">9. Cookies y almacenamiento local</h2>
+      <p>
+        No uso cookies de analytics ni de marketing. Sin Google Analytics,
+        sin Meta Pixel, sin Mixpanel, sin pixeles de tracking. No te rastreo
+        entre sitios.
+      </p>
+      <p>
+        El chatbot guarda tu conversación en
+        <code class="font-mono text-sm">localStorage</code> de tu navegador
+        para que no la pierdas al recargar. Es almacenamiento estrictamente
+        funcional, exento de consentimiento bajo ePrivacy art. 5(3). Vive
+        en tu equipo. El botón "Reiniciar" del chat lo limpia cuando quieras.
+      </p>
+
+      <h2 class="!mt-12">10. Cambios a esta política</h2>
+      <p>
+        Si cambio algo importante (nuevos subprocesadores, cambios de
+        plazos, finalidades nuevas), actualizo la fecha al inicio de la
+        página y publico la versión nueva en esta misma URL. La versión
+        vigente siempre vive en
+        <a href="https://thexperiment.dev/privacy">thexperiment.dev/privacy</a>.
+      </p>
+
+      <h2 class="!mt-12">11. Contacto</h2>
+      <p>
+        <a href={`mailto:${SITE.legal.contact}`}>{SITE.legal.contact}</a>.
+      </p>
+      <p>
+        Responsable: <strong class="font-medium text-ink">{SITE.legal.entity}</strong>,
+        Colombia. Para una petición formal con datos completos de la sociedad
+        (NIT, domicilio fiscal), escríbeme y te los paso por el mismo canal.
+      </p>
+    </div>
+
+    <hr class="my-16 border-paper-line" />
+
+    {/* ============================================================
+        ENGLISH — short summary, NOT a full mirror. The Spanish
+        version above is the canonical, legally binding policy.
+        This block is for YC / Speedrun reviewers and any
+        English-speaking visitor who lands here. ~250 words.
+        ============================================================ */}
+    <div class="prose-body space-y-5" lang="en">
+
+      <p class="eyebrow !mb-2">English summary</p>
+      <h2 class="!mt-2">Privacy at a glance.</h2>
+
+      <p>
+        The Spanish version above is the canonical, legally binding policy
+        for data subjects under Colombia's Ley 1581/2012, Mexico's LFPDPPP,
+        Brazil's LGPD, Peru's Ley 29733, and equivalent regimes in Argentina,
+        Chile, and Ecuador. The points below are a summary in English.
+      </p>
+
+      <p>
+        I'm Irina Velez, founder of {SITE.legal.entity} (Colombia). During the
+        May 2 – 17, 2026 discovery sprint I collect:
+      </p>
+      <ul class="list-disc pl-6 space-y-2">
+        <li>What you tell me in the /talk chatbot (company, services, city, free-text).</li>
+        <li>What Cal.com captures when you book a 40-min call (name, email, time slot).</li>
+        <li>Written notes and an AI-generated transcript of the call. No video, no separate audio file kept. I confirm this verbally at the start of every call.</li>
+        <li>Standard server logs (IP, browser) retained 30 days by Vercel.</li>
+      </ul>
+
+      <p>
+        <strong class="font-medium text-ink">Subprocessors</strong>:
+        Anthropic (Claude API, no training on your data), Vercel (hosting),
+        Cal.com (bookings), and an AI transcription tool for the calls
+        (vendor selection in progress; the hard requirement for any tool I
+        use is no training on call data; the Spanish section above is the
+        source of truth and gets updated when finalized). All US-based;
+        SIC Circular Externa 005 of 2017 places the United States on the
+        adequate-protection list, so the transfer is valid without extra
+        paperwork. I do not sell data and do not share it with advertisers
+        or brokers.
+      </p>
+
+      <p>
+        <strong class="font-medium text-ink">Retention</strong>: chat,
+        notes, and transcripts deleted on November 17, 2026 (sprint close
+        + 6 months for analysis). Anonymized public synthesis kept
+        indefinitely (does not identify you). Server logs 30 days.
+      </p>
+
+      <p>
+        <strong class="font-medium text-ink">Your rights</strong>:
+        access, rectification, deletion, objection, consent withdrawal,
+        portability, and the right to file a complaint with the SIC
+        (Colombia) or your country's data authority. Email
+        <a href={`mailto:${SITE.legal.contact}`}> {SITE.legal.contact}</a>.
+        I respond within 10 business days for access requests, 15 for
+        rectification or deletion. No fee, no form, no notarization.
+      </p>
+
+      <p>
+        <strong class="font-medium text-ink">No tracking</strong>: no
+        analytics or marketing cookies. <code class="font-mono text-sm">localStorage</code>
+        keeps your chat session on your device only, as strictly necessary
+        functional storage. The experiment is not directed at minors.
+      </p>
+    </div>
+
+    <p class="mt-16 font-mono text-sm">
+      <a href="/" class="tracking-wide hover:text-signal">← Volver / Back to the experiment</a>
+    </p>
+
+  </section>
+</Base>

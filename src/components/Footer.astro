@@ -41,7 +41,10 @@ const progress = getProgress();
   <div class="border-t border-paper-line">
     <div class="container-page py-6 flex flex-col md:flex-row gap-3 md:items-center md:justify-between text-2xs font-mono text-ink-muted">
       <span>{SITE.legal.entity} · © {new Date().getFullYear()}</span>
-      <span>Built in 2 days. Watching for 16.</span>
+      <span class="flex gap-4">
+        <a href="/privacy" class="text-ink-muted hover:text-ink no-underline">Privacy · Privacidad</a>
+        <span>Built in 2 days. Watching for 16.</span>
+      </span>
     </div>
   </div>
 </footer>

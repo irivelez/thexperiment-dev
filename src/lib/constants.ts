@@ -28,6 +28,11 @@ export const SITE = {
   },
   legal: {
     entity: 'Deltanova SAS',
+    jurisdiction: 'Colombia',
+    // Placeholder until thexperiment.dev catchall is set up. Swap to a
+    // domain-aligned address (e.g. hola@thexperiment.dev) when available.
+    contact: 'hello@irinavelez.com',
+    privacyUpdated: '4 de mayo de 2026',
   },
 } as const;
 
