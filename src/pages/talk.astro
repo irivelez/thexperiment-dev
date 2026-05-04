@@ -543,11 +543,16 @@ function parseTokens(s: string): { tok: string; accent: boolean }[] {
       border: 1px solid rgba(255,255,255,0.08);
       color: white;
       align-self: flex-start;
+    }
+    /* Seed bubble (the SSR'd first child) gets the cinema fade-in. Subsequent
+       Ari replies appear immediately — they are streaming text, the cursor
+       already signals "in motion," and the previous opacity:0 default left
+       them invisible after the first turn. */
+    .ari #ari-messages > .bubble.bubble-ari:first-child {
       opacity: 0;
       transform: translateY(8px);
       transition: opacity 600ms ease 600ms, transform 600ms ease 600ms;
     }
-    .ari.show .bubble.bubble-ari.seed,
     .ari.show #ari-messages > .bubble.bubble-ari:first-child {
       opacity: 1;
       transform: translateY(0);
