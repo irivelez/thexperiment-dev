@@ -40,7 +40,43 @@ export const FETCH_COMPANY_URL_TOOL: Anthropic.Messages.Tool = {
   },
 };
 
-export const TOOLS: Anthropic.Messages.Tool[] = [FETCH_COMPANY_URL_TOOL];
+/**
+ * Anthropic's built-in web_search server tool. Anthropic executes searches
+ * server-side and returns the result tokens to the model in the same turn,
+ * so we don't run anything client-side for this — we just declare it.
+ *
+ * Why we need it: casalimpia.com (a real major Colombian cleaning company)
+ * sits behind Cloudflare Bot Management. No HTTP-level fetch from a
+ * serverless function — regardless of UA — will get past the JS challenge.
+ * Web search lets Ari read about the company anyway via Google's index,
+ * which is enough for our brief.
+ *
+ * Cost: ~$10 per 1,000 searches plus standard token cost. With max_uses:2
+ * and ~half of conversations needing it, ~$1 across the 100-call sprint.
+ *
+ * Type: Anthropic distinguishes "client tools" (we run them) from
+ * "server tools" (Anthropic runs them). Server tools have a `type` field
+ * pointing at the versioned tool name. The SDK 0.92's Tool type is permissive
+ * enough to accept this shape, but we cast through unknown to keep the
+ * compiler honest if upstream tightens its types.
+ */
+export const WEB_SEARCH_TOOL = {
+  type: 'web_search_20250305',
+  name: 'web_search',
+  max_uses: 2,
+} as unknown as Anthropic.Messages.Tool;
+
+export const TOOLS: Anthropic.Messages.Tool[] = [
+  FETCH_COMPANY_URL_TOOL,
+  WEB_SEARCH_TOOL,
+];
+
+/**
+ * Names of server-side tools that Anthropic executes for us. The chat
+ * handler must NOT try to dispatch these to runTool — they don't roundtrip
+ * through our function at all. Used to guard the tool-execution loop.
+ */
+export const SERVER_TOOL_NAMES = new Set<string>(['web_search']);
 
 interface FetchSuccess {
   ok: true;
