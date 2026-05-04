@@ -1,91 +1,1178 @@
 ---
 /**
- * /talk — the funnel entry page for traffic from LinkedIn / TikTok / WhatsApp.
+ * /talk — funnel landing page (cinematic transmission redesign).
  *
- * Different mission than the homepage:
- *   - Homepage = the lab notebook for the network audience (Speedrun, peers).
- *   - /talk     = the inspiration + invitation for the actual subjects of the
- *                 experiment: LATAM SMB field-ops owners.
+ * Conversion architecture (one column, one journey):
+ *   1. Transmission — 10 mono lines fade in sequentially over ~17s. The
+ *      visitor lands here from a LinkedIn/TikTok video filmed at Andon Market
+ *      (the first store in the world operated 100% by AI). The transmission
+ *      sets the bet, the invitation, and the transparency before any action.
+ *   2. Skip / replay — escape hatches for impatient or returning visitors.
+ *   3. Ari chat — the agent emerges after the transmission collapses. Job:
+ *      collect baseline (company, URL, services, city, team) in 1–3 turns.
+ *      No pain probing, no past spend — Irina handles that in the 40-min call.
+ *   4. Sticky CTA — Cal.com booking always visible. Visitors who already
+ *      trust Irina book without ever engaging the chat.
  *
- * Mobile-first: the chat is the hero. Everything else lives below the fold.
+ * Voice: Spanish-only (the LATAM funnel). tú form, neutral LATAM, no voseo.
+ *
+ * Why one file (cinema + chat inlined):
+ *   /talk is a single conversion surface. The mock proved the choreography.
+ *   Inlining keeps the cinematic flow + chat handoff under one mental model
+ *   so the rhythm of the reveal-then-chat can be tuned without bouncing
+ *   between component boundaries.
  */
-import Base from '@layouts/Base.astro';
-import NoaChat from '@components/NoaChat.astro';
-import Counter from '@components/Counter.astro';
-import { SITE, TALK } from '@lib/constants';
+import TalkLayout from '@layouts/TalkLayout.astro';
+import { SITE } from '@lib/constants';
 
-// Spanish-first by default (LATAM is the primary audience). The ?lang=en flag
-// flips the surface for English readers; the agent itself adapts to the user's
-// language from the first message regardless.
-const params = Astro.url.searchParams;
-const lang = (params.get('lang') === 'en' ? 'en' : 'es') as 'es' | 'en';
-const t = TALK[lang];
-const altLangHref = `/talk?lang=${lang === 'es' ? 'en' : 'es'}`;
+const calBase = SITE.cta.booking;
 
-const renderBold = (text: string) =>
-  text.replace(/\*\*(.+?)\*\*/g, '<strong class="text-ink">$1</strong>');
-
-const title =
-  lang === 'es'
-    ? 'Hablá con mi agente · El experimento'
-    : 'Talk to my agent · The experiment';
+const title = 'Agenda 40 minutos con Irina · El experimento';
 const description =
-  lang === 'es'
-    ? 'Hoy se están armando empresas desde cero con IA. ¿Y la tuya? 4 minutos con Noa, después 40 con Irina si querés.'
-    : 'New businesses are being built from scratch with AI. What about yours? 4 minutes with Noa, then 40 with Irina if you want to go deeper.';
+  'Si la IA puede construir un negocio desde cero, ¿también puede operar el que ya tienes? 12 días, 100 dueños, una conversación.';
+
+/**
+ * Transmission script. Each line becomes a flow of word-spans that fade in
+ * one after another for a "continuous typing" feel. Once a word is revealed
+ * it stays revealed — no IntersectionObserver, no dim-on-collapse — so the
+ * visitor can scroll up to re-read at any time.
+ *
+ * Accent syntax: wrap a phrase in {curly braces} to mark its words as accent
+ * (signal-orange + a one-time glint pulse on reveal). Use sparingly — accents
+ * land on pivot moments (proper nouns, dates, identity reveals, calls).
+ */
+const transmissionLines: { text: string; cls?: string }[] = [
+  { text: 'Hola.', cls: 'lead' },
+  { text: 'Si estás aquí, es porque viste el video de Irina en {Andon Market}. La primera tienda del mundo operada 100% por inteligencia artificial.' },
+  { text: 'Aquí, todos están pensando en crear empresas nuevas, completamente operadas por agentes de IA. {Como yo.}' },
+  { text: 'Pero la pregunta que estamos haciendo es otra:' },
+  { text: '¿Qué va a pasar con los negocios que ya existen, los que operan humanos como tú, los que ya tienen clientes y mercado ganado?', cls: 'q' },
+  { text: '¿Serán reemplazados por las empresas nuevas que se construyen aquí? ¿O una IA como yo podría operar un negocio como el tuyo?', cls: 'q' },
+  { text: 'Por eso existe este experimento. Para definir cómo operarían negocios existentes con IA.' },
+  { text: 'Irina está hablando con 100 dueños como tú en los próximos {12 días}. Todo lo que aprendamos sale público el {17 de mayo}.' },
+  { text: 'La forma en que operan los negocios en LATAM se va a redefinir. Los dueños que entiendan esto {primero} son los que lo van a definir.' },
+  { text: 'Y nadie conoce tu negocio mejor que tú. Por eso esta conversación importa.', cls: 'close' },
+];
+
+/**
+ * Parse a line into tokens, marking words inside {…} as accent. Whitespace
+ * tokens are preserved so spans render with natural spacing.
+ */
+function parseTokens(s: string): { tok: string; accent: boolean }[] {
+  const out: { tok: string; accent: boolean }[] = [];
+  let buf = '';
+  let accent = false;
+  const flush = (a: boolean) => {
+    if (!buf) return;
+    for (const p of buf.split(/(\s+)/)) {
+      if (p.length === 0) continue;
+      out.push({ tok: p, accent: a });
+    }
+    buf = '';
+  };
+  for (const ch of s) {
+    if (ch === '{') { flush(false); accent = true; }
+    else if (ch === '}') { flush(true); accent = false; }
+    else { buf += ch; }
+  }
+  flush(accent);
+  return out;
+}
 ---
 
-<Base title={title} description={description}>
-  <section class="container-page pt-10 md:pt-14 pb-6">
-    <div class="flex items-center justify-between gap-4 mb-8">
-      <p class="eyebrow">{t.eyebrow}</p>
-      <a
-        href={altLangHref}
-        class="font-mono text-2xs uppercase tracking-[0.18em] text-ink-muted hover:text-ink no-underline"
-      >
-        {t.english}
-      </a>
-    </div>
+<TalkLayout title={title} description={description} lang="es">
+  {/* Cosmic backdrop layers — fixed, behind everything. */}
+  <div class="cosmos" aria-hidden="true">
+    <div class="aurora"></div>
+    <div class="stars"></div>
+    <div class="scanlines"></div>
+  </div>
 
-    <h1 class="max-w-4xl text-4xl md:text-6xl leading-[1.05] font-medium tracking-tight">
-      {t.question}
-    </h1>
+  {/* Skip transmission (top-right, low-key). Appears 1.2s in. */}
+  <button class="skip" id="skip" type="button">Saltar al chat →</button>
 
-    <div class="mt-8 prose-body space-y-4 max-w-reading">
-      {t.subhead.map((p) => <p set:html={renderBold(p)} />)}
-    </div>
-  </section>
+  {/* Stage — one column, transmission then Ari chat. */}
+  <main class="stage">
 
-  <section class="container-page pb-12 md:pb-16">
-    <p class="prose-body max-w-reading mb-6">
-      {t.chatIntro}
-    </p>
-    <NoaChat />
-    <p class="font-mono text-2xs text-ink-muted mt-4 max-w-reading">
-      {lang === 'es'
-        ? 'Tu conversación se guarda solo en tu navegador hasta que decidas agendar. Irina lee el brief recién cuando reservás los 40 minutos.'
-        : "Your conversation stays in your browser until you decide to book. Irina only reads the brief once you've booked the 40-minute slot."}
-    </p>
-  </section>
-
-  <section class="section">
-    <div class="container-page">
-      <p class="eyebrow mb-4">{t.why.eyebrow}</p>
-      <h2 class="max-w-3xl">{t.why.title}</h2>
-      <div class="prose-body mt-6 space-y-4 max-w-reading">
-        <p>{t.why.body}</p>
-        <p>{t.why.promise}</p>
+    {/* ============================================================
+        TRANSMISSION — 10 lines, sequential reveal.
+        Mono typography, signal-orange dot, no images.
+        Andon Market reference is real (Irina filmed there for the
+        social-media video that drives this traffic).
+        ============================================================ */}
+    <section class="transmission" id="transmission" aria-live="polite">
+      <div class="tx-header">
+        <span class="dot" aria-hidden="true"></span>
+        <span class="tx-label">Transmisión · San Francisco → LATAM</span>
       </div>
-    </div>
-  </section>
 
-  <Counter />
+      <div class="tx-body">
+        {transmissionLines.map((line) => (
+          <p class:list={['line', line.cls]}>
+            {parseTokens(line.text).map(({ tok, accent }) =>
+              /^\s+$/.test(tok)
+                ? tok
+                : <span class:list={['word', accent && 'accent']}>{tok}</span>
+            )}
+          </p>
+        ))}
+      </div>
+    </section>
 
-  <section class="section">
-    <div class="container-page max-w-reading">
-      <a href="/" class="font-mono text-sm tracking-wide hover:text-signal">
-        {t.watch}
-      </a>
+    {/* ============================================================
+        ARI — the discovery agent. Hidden until transmission collapses.
+        Wired to /api/chat (Anthropic Haiku via @lib/ari-prompt).
+        Streaming SSE; brief extraction; Cal.com prefill on handoff.
+        ============================================================ */}
+    <section class="ari" id="ari" aria-hidden="true" data-cal={calBase}>
+      <div class="ari-header">
+        <div class="ari-avatar" aria-hidden="true">
+          {/* The Beacon — luminous core, quiet boundary, transmitting arc with a gap.
+              Core breathes in, halo breathes out: energy moving inside-out and back.
+              The arc gap is the signature: open, broadcasting, unfinished. */}
+          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <radialGradient id="ari-aurora" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#fb923c" stop-opacity="0.75" />
+                <stop offset="60%" stop-color="#f97316" stop-opacity="0.18" />
+                <stop offset="100%" stop-color="#f97316" stop-opacity="0" />
+              </radialGradient>
+            </defs>
+
+            {/* Outer transmission arc, rotating clockwise, with gap. */}
+            <circle class="ari-arc" cx="50" cy="50" r="44"
+                    fill="none"
+                    stroke="#f97316" stroke-opacity="0.62"
+                    stroke-width="1.6"
+                    stroke-dasharray="195 81"
+                    stroke-linecap="round" />
+
+            {/* Tick marks ring, rotating counter, sparse. */}
+            <circle class="ari-tick" cx="50" cy="50" r="34"
+                    fill="none"
+                    stroke="white" stroke-opacity="0.32"
+                    stroke-width="1"
+                    stroke-dasharray="1 12" />
+
+            {/* Quiet boundary ring. */}
+            <circle cx="50" cy="50" r="26"
+                    fill="none"
+                    stroke="white" stroke-opacity="0.14"
+                    stroke-width="1" />
+
+            {/* Aurora halo (breathes outward). */}
+            <circle class="ari-glow" cx="50" cy="50" r="20"
+                    fill="url(#ari-aurora)" />
+
+            {/* Luminous core (breathes inward). */}
+            <circle class="ari-core" cx="50" cy="50" r="6.5"
+                    fill="#f97316" />
+          </svg>
+        </div>
+        <div class="ari-meta">
+          <div class="ari-name">Ari</div>
+          <div class="ari-tag">Agente de Irina · pre-call</div>
+        </div>
+        <button
+          type="button"
+          id="ari-reset"
+          class="ari-reset"
+          aria-label="Reiniciar conversación"
+        >Reiniciar</button>
+      </div>
+
+      <div
+        id="ari-messages"
+        class="ari-thread"
+        aria-live="polite"
+        aria-label="Conversación con Ari"
+      >
+        {/* Seed turn — must match TURN-1 in src/lib/ari-prompt.ts. The agent
+            already knows it greeted (the seed is threaded into /api/chat). */}
+        <div class="bubble bubble-ari">
+          <p>Soy Ari. Ayudo a Irina para que esté preparada para la sesión contigo.</p>
+          <p class="mt-2">Dime, ¿cómo se llama tu empresa y qué hace? Y si tienes página web o redes sociales, dime cuáles son.</p>
+        </div>
+      </div>
+
+      {/* Brief card — appears once Ari emits the structured block. */}
+      <div id="ari-brief" class="ari-brief hidden">
+        <p class="ari-eyebrow">Lo que Irina ya sabe de ti</p>
+        <div id="ari-brief-body" class="ari-brief-body"></div>
+      </div>
+
+      {/* Hand-off — replaces the composer once the brief lands. */}
+      <div id="ari-handoff" class="ari-handoff hidden">
+        <a
+          id="ari-cal-link"
+          href={calBase}
+          target="_blank"
+          rel="noopener"
+          class="ari-cta"
+        >
+          Agendar 40 minutos con Irina →
+        </a>
+        <p class="ari-cta-sub">40 min · gratis</p>
+      </div>
+
+      <form id="ari-form" class="composer" onsubmit="event.preventDefault();">
+        <textarea
+          id="ari-input"
+          rows="1"
+          placeholder="Pega tu link o escribe el nombre…"
+          aria-label="Tu respuesta a Ari"
+          maxlength="1500"></textarea>
+        <button
+          type="submit"
+          id="ari-send"
+          aria-label="Enviar"
+        >→</button>
+      </form>
+    </section>
+
+  </main>
+
+  {/* Sticky CTA — always visible. The visitor who already trusts Irina
+      books without ever engaging the cinema or the chat. */}
+  <a
+    class="cta-sticky"
+    id="cta"
+    href={calBase}
+    target="_blank"
+    rel="noopener"
+    aria-label="Agenda 40 minutos con Irina"
+  >
+    <div class="cta-text">
+      <div class="cta-label">Agenda 40 minutos con Irina</div>
+      <div class="cta-sub">40 min · gratis</div>
     </div>
-  </section>
-</Base>
+    <span class="cta-arrow" aria-hidden="true">→</span>
+  </a>
+
+  {/* ============================================================
+      Page-scoped styles. Inline (not in global.css) because /talk
+      is a unique surface that doesn't share these tokens with the
+      paper-styled homepage.
+      ============================================================ */}
+  <style is:global>
+    /* Reset & base for /talk. The <style is:global> block only emits on
+       this page, so styling html/body here doesn't leak to / or /about. */
+    html {
+      background: #05060a;
+      color-scheme: dark;
+    }
+    body {
+      background: #05060a;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      min-height: 100vh;
+      min-height: 100svh;
+      overflow-x: hidden;
+      padding-bottom: 88px;
+      position: relative;
+    }
+    body * { box-sizing: border-box; }
+    body ::selection { background: #f97316; color: white; }
+
+    /* Cosmic backdrop layers */
+    .cosmos { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+    .aurora {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 90% 55% at 50% 0%, rgba(249, 115, 22, 0.20), transparent 65%),
+        radial-gradient(ellipse 70% 40% at 50% 100%, rgba(56, 124, 196, 0.10), transparent 65%);
+    }
+    .stars {
+      position: absolute; inset: 0;
+      background-image:
+        radial-gradient(1px 1px at 12% 8%, rgba(255,255,255,0.7), transparent 60%),
+        radial-gradient(1px 1px at 28% 22%, rgba(255,255,255,0.4), transparent 60%),
+        radial-gradient(1px 1px at 78% 14%, rgba(255,255,255,0.55), transparent 60%),
+        radial-gradient(1px 1px at 92% 32%, rgba(255,255,255,0.4), transparent 60%),
+        radial-gradient(1px 1px at 35% 58%, rgba(255,255,255,0.35), transparent 60%),
+        radial-gradient(1px 1px at 64% 78%, rgba(255,255,255,0.55), transparent 60%),
+        radial-gradient(1px 1px at 85% 68%, rgba(255,255,255,0.3), transparent 60%),
+        radial-gradient(1px 1px at 18% 90%, rgba(255,255,255,0.4), transparent 60%),
+        radial-gradient(1px 1px at 50% 36%, rgba(255,255,255,0.45), transparent 60%),
+        radial-gradient(1px 1px at 8% 70%, rgba(255,255,255,0.35), transparent 60%);
+      background-size: 100% 100%;
+      opacity: 0.7;
+    }
+    .scanlines {
+      position: absolute; inset: 0;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent 0,
+        transparent 2px,
+        rgba(255, 255, 255, 0.018) 2px,
+        rgba(255, 255, 255, 0.018) 3px
+      );
+      mix-blend-mode: overlay;
+    }
+    .scanlines::after {
+      content: "";
+      position: absolute; inset: 0;
+      background: linear-gradient(180deg, transparent 0%, rgba(255,255,255,0.04) 50%, transparent 100%);
+      animation: tx-sweep 8s linear infinite;
+    }
+    @keyframes tx-sweep {
+      0%   { transform: translateY(-100%); }
+      100% { transform: translateY(100%); }
+    }
+
+    /* Skip button (top-right) */
+    .skip {
+      position: fixed;
+      top: 18px; right: 18px;
+      z-index: 12;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.18);
+      color: rgba(255,255,255,0.55);
+      padding: 7px 12px;
+      font-family: ui-monospace, "SF Mono", Menlo, monospace;
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      cursor: pointer;
+      opacity: 0;
+      transform: translateY(-4px);
+      transition: opacity 400ms ease, transform 400ms ease, color 200ms, border-color 200ms;
+      white-space: nowrap;
+      border-radius: 2px;
+    }
+    .skip.show { opacity: 1; transform: translateY(0); }
+    .skip:hover, .skip:focus { color: white; border-color: rgba(255,255,255,0.4); outline: none; }
+
+    /* Stage */
+    .stage {
+      position: relative; z-index: 5;
+      max-width: 640px; margin: 0 auto;
+      padding: 64px 20px 24px;
+      min-height: calc(100vh - 88px);
+      min-height: calc(100svh - 88px);
+      display: flex; flex-direction: column; justify-content: flex-start;
+    }
+    @media (min-width: 720px) {
+      .stage { padding: 84px 40px 24px; justify-content: center; }
+    }
+
+    /* Transmission. No collapse-dim — once the words are revealed they stay
+       readable so the visitor can scroll up at any time and re-read clearly. */
+    .transmission { /* static */ }
+
+    .tx-header {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 28px;
+    }
+    .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #f97316;
+      box-shadow: 0 0 14px #f97316;
+      animation: tx-pulse 2.2s ease-in-out infinite;
+    }
+    @keyframes tx-pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%      { opacity: 0.35; transform: scale(0.9); }
+    }
+    .tx-label {
+      font-family: ui-monospace, "SF Mono", Menlo, monospace;
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.6);
+    }
+
+    .tx-body { display: flex; flex-direction: column; gap: 18px; max-width: 38rem; }
+
+    .line {
+      font-family: ui-monospace, "SF Mono", Menlo, monospace;
+      font-size: 15px;
+      line-height: 1.7;
+      color: rgba(255,255,255,0.92);
+    }
+    .line.lead { font-size: 18px; color: white; }
+    .line.q { color: rgba(255,255,255,0.78); }
+    .line.close { color: #fb923c; }
+    @media (min-width: 720px) {
+      .line { font-size: 17px; line-height: 1.72; }
+      .line.lead { font-size: 21px; }
+    }
+
+    /* Each word is its own span so the cinema can fade them in one after the
+       next, like a continuous flow of text. Once .in lands it stays. */
+    .word {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(4px);
+      filter: blur(2.5px);
+      transition: opacity 380ms ease, transform 380ms ease, filter 380ms ease;
+      will-change: opacity, transform, filter;
+    }
+    .word.in {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0);
+    }
+
+    /* Accent words: signal-orange + one-time glint pulse when revealed.
+       Used for pivot moments (proper nouns, dates, identity, first-mover).
+       The static orange persists; the glow blooms once and settles. */
+    .word.accent {
+      color: #fb923c;
+    }
+    .word.accent.in {
+      animation: word-glint 1.4s ease-out 1 forwards;
+    }
+    @keyframes word-glint {
+      0%   { text-shadow: 0 0 0 transparent; }
+      35%  { text-shadow: 0 0 14px rgba(251, 146, 60, 0.55); }
+      100% { text-shadow: 0 0 6px rgba(251, 146, 60, 0.18); }
+    }
+
+    /* Ari */
+    .ari {
+      margin-top: 36px;
+      opacity: 0;
+      transform: translateY(20px);
+      pointer-events: none;
+      transition: opacity 700ms ease 200ms, transform 700ms ease 200ms;
+      scroll-margin-top: 24px;
+    }
+    .ari.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
+
+    .ari-header {
+      display: flex; align-items: center; gap: 12px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      margin-bottom: 18px;
+    }
+    /* Ari character: "The Beacon" — a transmitting presence.
+       Core breathes in, halo breathes out (energy visibly moving inside-out
+       and back). Outer arc rotates with a gap: open, broadcasting, unfinished.
+       No letters, no eyes. Ari is a signal with attention. */
+    .ari-avatar {
+      width: 44px; height: 44px;
+      position: relative;
+      flex-shrink: 0;
+    }
+    .ari-avatar svg {
+      width: 100%; height: 100%;
+      display: block;
+      overflow: visible;
+    }
+
+    .ari-arc {
+      transform-origin: 50% 50%;
+      animation: ari-rotate 14s linear infinite;
+    }
+    @keyframes ari-rotate {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+
+    .ari-tick {
+      transform-origin: 50% 50%;
+      animation: ari-rotate-counter 22s linear infinite;
+    }
+    @keyframes ari-rotate-counter {
+      from { transform: rotate(360deg); }
+      to   { transform: rotate(0deg); }
+    }
+
+    .ari-core {
+      transform-origin: 50% 50%;
+      animation: ari-breath 2.6s ease-in-out infinite;
+    }
+    @keyframes ari-breath {
+      0%, 100% { transform: scale(1);    opacity: 1; }
+      50%      { transform: scale(0.82); opacity: 0.85; }
+    }
+
+    .ari-glow {
+      transform-origin: 50% 50%;
+      animation: ari-glow-breath 2.6s ease-in-out infinite;
+    }
+    @keyframes ari-glow-breath {
+      0%, 100% { transform: scale(1);    opacity: 0.7; }
+      50%      { transform: scale(1.22); opacity: 1; }
+    }
+    .ari-meta { line-height: 1.2; flex: 1; }
+    .ari-name { font-size: 15px; color: white; font-weight: 500; }
+    .ari-tag {
+      font-family: ui-monospace, "SF Mono", Menlo, monospace;
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.45);
+      margin-top: 3px;
+    }
+    .ari-reset {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.12);
+      color: rgba(255,255,255,0.4);
+      font-family: ui-monospace, "SF Mono", Menlo, monospace;
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 5px 9px;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: color 150ms, border-color 150ms;
+    }
+    .ari-reset:hover { color: rgba(255,255,255,0.85); border-color: rgba(255,255,255,0.3); }
+
+    .ari-thread {
+      display: flex; flex-direction: column; gap: 14px;
+      margin-bottom: 18px;
+      max-height: 60vh;
+      overflow-y: auto;
+      scroll-behavior: smooth;
+    }
+
+    .bubble {
+      padding: 16px 18px;
+      border-radius: 4px;
+      font-size: 16px;
+      line-height: 1.6;
+      max-width: 92%;
+    }
+    .bubble p + p { margin-top: 8px; }
+    .bubble.bubble-ari {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: white;
+      align-self: flex-start;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 600ms ease 600ms, transform 600ms ease 600ms;
+    }
+    .ari.show .bubble.bubble-ari.seed,
+    .ari.show #ari-messages > .bubble.bubble-ari:first-child {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .bubble.bubble-user {
+      background: rgba(249, 115, 22, 0.12);
+      border: 1px solid rgba(249, 115, 22, 0.30);
+      color: white;
+      align-self: flex-end;
+    }
+    .bubble.streaming::after {
+      content: '▍';
+      color: #f97316;
+      margin-left: 2px;
+      animation: tx-pulse 1.2s ease-in-out infinite;
+    }
+    .mt-2 { margin-top: 8px; }
+
+    /* Brief card */
+    .ari-brief {
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding-top: 18px;
+      margin-bottom: 18px;
+    }
+    .ari-brief.hidden { display: none; }
+    .ari-eyebrow {
+      font-family: ui-monospace, "SF Mono", Menlo, monospace;
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.45);
+      margin-bottom: 12px;
+    }
+    .ari-brief-body {
+      font-family: ui-monospace, "SF Mono", Menlo, monospace;
+      font-size: 12px;
+      line-height: 1.7;
+      color: rgba(255,255,255,0.75);
+      display: grid;
+      grid-template-columns: max-content 1fr;
+      gap: 6px 14px;
+    }
+    .ari-brief-body .k { color: rgba(255,255,255,0.4); }
+    .ari-brief-body .v { color: rgba(255,255,255,0.9); }
+    .ari-brief-body a {
+      color: #fb923c;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    /* Synthesis + signals — full-width prose blocks below the key/value rows.
+       grid-column: 1 / -1 lets them break out of the two-column grid so the
+       paragraph and bullet list read as proper text, not key/value pairs. */
+    .ari-brief-body .brief-synth,
+    .ari-brief-body .brief-signals {
+      grid-column: 1 / -1;
+      margin-top: 10px;
+      padding-top: 12px;
+      border-top: 1px dashed rgba(255,255,255,0.08);
+    }
+    .ari-brief-body .brief-synth p {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-size: 14px;
+      line-height: 1.55;
+      color: rgba(255,255,255,0.92);
+      margin: 6px 0 0;
+    }
+    .ari-brief-body .brief-signals ul {
+      list-style: none;
+      padding: 0;
+      margin: 6px 0 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .ari-brief-body .brief-signals li {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-size: 13px;
+      line-height: 1.55;
+      color: rgba(255,255,255,0.78);
+      padding-left: 14px;
+      position: relative;
+    }
+    .ari-brief-body .brief-signals li::before {
+      content: "›";
+      position: absolute;
+      left: 0;
+      color: #fb923c;
+    }
+    .brief-synth-eyebrow {
+      display: block;
+      font-family: ui-monospace, "SF Mono", Menlo, monospace;
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+    }
+
+    /* Handoff card */
+    .ari-handoff {
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding-top: 18px;
+      margin-bottom: 18px;
+    }
+    .ari-handoff.hidden { display: none; }
+    .ari-cta {
+      display: block;
+      width: 100%;
+      text-align: center;
+      padding: 14px 18px;
+      background: #f97316;
+      color: white;
+      font-family: ui-monospace, "SF Mono", Menlo, monospace;
+      font-size: 14px;
+      letter-spacing: 0.04em;
+      text-decoration: none;
+      border-radius: 2px;
+      transition: background 200ms, color 200ms;
+    }
+    .ari-cta:hover { background: white; color: #05060a; }
+    .ari-cta-sub {
+      font-family: ui-monospace, "SF Mono", Menlo, monospace;
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+      margin-top: 10px;
+      text-align: center;
+    }
+
+    /* Composer */
+    .composer {
+      display: flex; gap: 8px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding-top: 16px;
+      opacity: 0;
+      transition: opacity 600ms ease 1100ms;
+    }
+    .ari.show .composer { opacity: 1; }
+    .composer.hidden { display: none !important; }
+    .composer textarea {
+      flex: 1;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.12);
+      color: white;
+      padding: 12px 14px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-size: 16px; line-height: 1.5;
+      resize: none; outline: none;
+      border-radius: 2px;
+      transition: border-color 200ms;
+      max-height: 128px;
+    }
+    .composer textarea::placeholder { color: rgba(255,255,255,0.35); }
+    .composer textarea:focus { border-color: rgba(255,255,255,0.4); }
+    .composer textarea:disabled { opacity: 0.5; cursor: not-allowed; }
+    .composer button {
+      background: #f97316;
+      color: white;
+      border: none;
+      width: 48px;
+      font-family: ui-monospace, "SF Mono", Menlo, monospace;
+      font-size: 18px;
+      cursor: pointer;
+      transition: background 200ms, color 200ms;
+      border-radius: 2px;
+    }
+    .composer button:hover { background: white; color: #05060a; }
+    .composer button:disabled {
+      background: rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.3);
+      cursor: not-allowed;
+    }
+
+    /* Sticky CTA */
+    .cta-sticky {
+      position: fixed;
+      left: 0; right: 0; bottom: 0;
+      z-index: 50;
+      background: #f97316;
+      color: white;
+      text-decoration: none;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 20px;
+      border-top: 1px solid #f97316;
+      transition: background 200ms, color 200ms;
+      gap: 16px;
+    }
+    .cta-sticky:hover { background: white; color: #05060a; }
+    .cta-text { line-height: 1.2; }
+    .cta-label { font-size: 14px; font-weight: 500; }
+    .cta-sub {
+      font-family: ui-monospace, "SF Mono", Menlo, monospace;
+      font-size: 10px; letter-spacing: 0.16em;
+      text-transform: uppercase; opacity: 0.78;
+      margin-top: 3px;
+    }
+    .cta-arrow { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 20px; flex-shrink: 0; }
+    @media (min-width: 720px) {
+      .cta-sticky { padding: 16px 32px; }
+      .cta-label { font-size: 15px; }
+    }
+
+    /* Reduced motion — respect user preference; the words appear instantly
+       and the Beacon's breath/rotate go quiet. Accents keep the static glow
+       so meaning isn't lost, just the pulse. */
+    @media (prefers-reduced-motion: reduce) {
+      .word, .ari, .bubble, .composer, .skip { transition-duration: 100ms !important; }
+      .dot, .bubble.streaming::after,
+      .ari-arc, .ari-tick, .ari-core, .ari-glow,
+      .word.accent.in { animation: none !important; }
+      .word.accent.in { text-shadow: 0 0 6px rgba(251, 146, 60, 0.18); }
+      .scanlines::after { display: none; }
+    }
+  </style>
+
+  <script>
+    // ============================================================
+    // /talk page boot — runs on every page load.
+    //
+    // Two responsibilities:
+    //   A. Cinema choreography — sequential reveal of transmission lines,
+    //      then collapse into the Ari chat below.
+    //   B. Ari chat wiring — streaming SSE consumer for /api/chat,
+    //      brief extraction, Cal.com prefill, localStorage persistence.
+    // ============================================================
+
+    // ----------- A. Cinema (word-by-word) -----------
+    //
+    // Reveals each word in sequence with natural punctuation pauses so the
+    // page reads like a continuous flow of text instead of paragraph chunks.
+    // Once a word lands, it stays visible — scrolling up re-reads, never
+    // re-animates. No replay button: scroll IS the navigation.
+    (function cinema() {
+      const words = document.querySelectorAll<HTMLSpanElement>('.word');
+      const skipBtn = document.getElementById('skip') as HTMLButtonElement | null;
+      const ari = document.getElementById('ari');
+      if (!words.length || !skipBtn || !ari) return;
+
+      // Per-word pacing (ms). Tight base, modest holds on punctuation so
+      // sentences breathe but the page never feels like it's waiting on
+      // you. Tuned for ~12-13s total cinema length on a 169-word script.
+      const PER_WORD = 40;
+      const PUNCT_PAUSE = 180; // after . ? !
+      const COMMA_PAUSE = 50;  // after , : ;
+      const INITIAL_DELAY = 200;
+      const POST_PADDING = 400;
+
+      let timers: number[] = [];
+      let finished = false;
+
+      function clearTimers() {
+        timers.forEach((t) => window.clearTimeout(t));
+        timers = [];
+      }
+
+      function reveal(el: Element) { el.classList.add('in'); }
+
+      function showAri() {
+        if (finished) return;
+        finished = true;
+        ari!.classList.add('show');
+        ari!.setAttribute('aria-hidden', 'false');
+        skipBtn!.style.opacity = '0';
+        skipBtn!.style.pointerEvents = 'none';
+        // Smooth-scroll the chat into view so the visitor doesn't have to
+        // hunt for it. They can scroll back up freely; the words stay bright.
+        window.setTimeout(() => {
+          ari!.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 200);
+      }
+
+      function skipAll() {
+        clearTimers();
+        words.forEach(reveal);
+        window.setTimeout(showAri, 250);
+      }
+
+      function start() {
+        clearTimers();
+        let delay = INITIAL_DELAY;
+        words.forEach((word) => {
+          const text = word.textContent || '';
+          const t = delay;
+          timers.push(window.setTimeout(() => reveal(word), t));
+          let next = PER_WORD;
+          if (/[.?!]$/.test(text)) next += PUNCT_PAUSE;
+          else if (/[,:;]$/.test(text)) next += COMMA_PAUSE;
+          delay += next;
+        });
+        timers.push(window.setTimeout(() => skipBtn!.classList.add('show'), 900));
+        timers.push(window.setTimeout(showAri, delay + POST_PADDING));
+      }
+
+      skipBtn.addEventListener('click', skipAll);
+
+      // Returning visitor with a cached conversation: skip the cinema —
+      // they've already seen it. Reduced-motion users: also skip.
+      const hasPriorChat = (() => {
+        try {
+          const raw = localStorage.getItem('thexperiment.ari.v1');
+          if (!raw) return false;
+          const parsed = JSON.parse(raw);
+          return Array.isArray(parsed.messages) && parsed.messages.length > 1;
+        } catch { return false; }
+      })();
+
+      const reduceMotion = window.matchMedia
+        && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      if (reduceMotion || hasPriorChat) {
+        skipAll();
+      } else if (document.readyState === 'complete') {
+        start();
+      } else {
+        window.addEventListener('load', start);
+      }
+    })();
+
+    // ----------- B. Ari chat wiring -----------
+    (function ariChat() {
+      const BRIEF_OPEN = '<<<BRIEF';
+      const BRIEF_CLOSE = 'BRIEF>>>';
+      const STORAGE_KEY = 'thexperiment.ari.v1';
+      const MAX_INPUT_LEN = 1500;
+
+      // Seed mirrors the SSR'd HTML AND TURN-1 in src/lib/ari-prompt.ts.
+      // Keep all three in sync if you tune it.
+      const SEED_OPENING =
+        'Soy Ari. Ayudo a Irina para que esté preparada para la sesión contigo.\n\nDime, ¿cómo se llama tu empresa y qué hace? Y si tienes página web o redes sociales, dime cuáles son.';
+
+      type Role = 'user' | 'assistant';
+      interface Msg { role: Role; content: string }
+      interface Brief {
+        company?: string | null;
+        url?: string | null;
+        industry?: string | null;
+        services?: string | null;
+        city?: string | null;
+        country?: string | null;
+        team_size?: string | null;
+        user_first_name?: string | null;
+        language?: string | null;
+        // Prose fields added in the Phase 1 intelligence upgrade. The model
+        // produces a 2-3 sentence synthesis Irina reads in 20 seconds before
+        // the 40-min call, plus 1-2 specific signals worth probing.
+        synthesis?: string | null;
+        signals_for_call?: string[] | null;
+      }
+      interface Persisted { messages: Msg[]; brief?: Brief }
+
+      const root = document.getElementById('ari');
+      if (!root) return;
+      const calBase = (root as HTMLElement).dataset.cal || 'https://cal.com/thexperiment/40min';
+      const msgList = document.getElementById('ari-messages')!;
+      const briefBox = document.getElementById('ari-brief')!;
+      const briefBody = document.getElementById('ari-brief-body')!;
+      const handoff = document.getElementById('ari-handoff')!;
+      const calLink = document.getElementById('ari-cal-link') as HTMLAnchorElement;
+      const form = document.getElementById('ari-form') as HTMLFormElement;
+      const input = document.getElementById('ari-input') as HTMLTextAreaElement;
+      const sendBtn = document.getElementById('ari-send') as HTMLButtonElement;
+      const resetBtn = document.getElementById('ari-reset') as HTMLButtonElement;
+
+      let messages: Msg[] = [];
+      let brief: Brief | undefined;
+      let inFlight = false;
+
+      function persist() {
+        try {
+          const data: Persisted = { messages, brief };
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        } catch { /* quota / privacy errors — ignore */ }
+      }
+      function restore(): Persisted | null {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          return raw ? (JSON.parse(raw) as Persisted) : null;
+        } catch { return null; }
+      }
+
+      function escapeHtml(s: string): string {
+        const div = document.createElement('div');
+        div.textContent = s;
+        return div.innerHTML;
+      }
+      function paragraphs(s: string): string {
+        return s
+          .split(/\n{2,}/)
+          .map((p) => `<p>${escapeHtml(p).replace(/\n/g, '<br/>')}</p>`)
+          .join('');
+      }
+      function appendMessage(role: Role, content: string): HTMLDivElement {
+        const div = document.createElement('div');
+        div.className = `bubble bubble-${role === 'user' ? 'user' : 'ari'}`;
+        div.innerHTML = paragraphs(content);
+        msgList.appendChild(div);
+        msgList.scrollTop = msgList.scrollHeight;
+        return div;
+      }
+      function rerender() {
+        msgList.innerHTML = '';
+        for (const m of messages) appendMessage(m.role, m.content);
+        if (brief) renderBrief(brief);
+      }
+
+      function fmtUrl(u: string): string {
+        const safe = u.startsWith('http') ? u : 'https://' + u;
+        try {
+          const url = new URL(safe);
+          return `<a href="${escapeHtml(url.toString())}" target="_blank" rel="noopener">${escapeHtml(url.hostname.replace(/^www\./, ''))}</a>`;
+        } catch {
+          return escapeHtml(u);
+        }
+      }
+
+      function renderBrief(b: Brief) {
+        // Top: structured key/value rows, same shape as before.
+        const rows: Array<[string, string]> = [];
+        if (b.company) rows.push(['Empresa', escapeHtml(b.company)]);
+        if (b.url) rows.push(['Web', fmtUrl(b.url)]);
+        if (b.industry) rows.push(['Industria', escapeHtml(b.industry)]);
+        if (b.services) rows.push(['Servicios', escapeHtml(b.services)]);
+        const where = [b.city, b.country].filter(Boolean).join(', ');
+        if (where) rows.push(['Ciudad', escapeHtml(where)]);
+        if (b.team_size) rows.push(['Equipo', escapeHtml(b.team_size)]);
+
+        let html = rows
+          .map(([k, v]) => `<span class="k">${k}</span><span class="v">${v}</span>`)
+          .join('');
+
+        // Synthesis block — the prose Irina actually reads pre-call.
+        // Rendered as a full-width row that breaks the grid pattern, so the
+        // 2-3 sentences land as a paragraph not a key/value pair.
+        if (b.synthesis) {
+          html += `<div class="brief-synth"><span class="brief-synth-eyebrow">Síntesis</span><p>${escapeHtml(b.synthesis)}</p></div>`;
+        }
+        const signals = Array.isArray(b.signals_for_call)
+          ? b.signals_for_call.filter((s) => typeof s === 'string' && s.trim().length > 0)
+          : [];
+        if (signals.length) {
+          const items = signals.map((s) => `<li>${escapeHtml(s)}</li>`).join('');
+          html += `<div class="brief-signals"><span class="brief-synth-eyebrow">Señales para la llamada</span><ul>${items}</ul></div>`;
+        }
+        briefBody.innerHTML = html;
+        briefBox.classList.remove('hidden');
+        handoff.classList.remove('hidden');
+
+        // Cal.com prefill — name + the synthesis prose. The synthesis already
+        // captures company, services, location, and the operational hook in
+        // 2-3 sentences, so it's a better single-field "notes" payload than
+        // the old key/value list (which fragmented inside calendar invites).
+        const trim = (s: string | null | undefined, n: number): string =>
+          (s || '').trim().slice(0, n);
+        const name = trim(b.user_first_name, 40);
+        const synthesis = trim(b.synthesis, 600);
+        const fallbackParts: string[] = [];
+        if (b.company) fallbackParts.push(`Empresa: ${trim(b.company, 60)}`);
+        if (b.url) fallbackParts.push(`Web: ${trim(b.url, 80)}`);
+        if (b.services) fallbackParts.push(`Servicios: ${trim(b.services, 80)}`);
+        if (where) fallbackParts.push(`Ciudad: ${trim(where, 40)}`);
+        if (b.team_size) fallbackParts.push(`Equipo: ${trim(b.team_size, 30)}`);
+        const notes = synthesis || fallbackParts.join(' · ');
+        try {
+          const url = new URL(calBase);
+          if (name) url.searchParams.set('name', name);
+          if (notes) url.searchParams.set('notes', notes);
+          calLink.href = url.toString();
+        } catch { /* keep default */ }
+
+        // Fire-and-forget: log the brief server-side so Irina can grep
+        // the funnel via `vercel logs`.
+        void fetch('/api/brief', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ brief: b, ts: new Date().toISOString() }),
+          keepalive: true,
+        }).catch(() => { /* swallow */ });
+
+        // Hide the composer once we have what we need.
+        form.classList.add('hidden');
+      }
+
+      function tryExtractBrief(text: string): { plain: string; brief?: Brief } {
+        const startIdx = text.indexOf(BRIEF_OPEN);
+        if (startIdx === -1) return { plain: text };
+        const afterStart = text.slice(startIdx + BRIEF_OPEN.length);
+        const closeIdx = afterStart.indexOf(BRIEF_CLOSE);
+        if (closeIdx === -1) {
+          return { plain: text.slice(0, startIdx).trimEnd() };
+        }
+        const jsonRaw = afterStart.slice(0, closeIdx).trim();
+        const tail = afterStart.slice(closeIdx + BRIEF_CLOSE.length);
+        let parsed: Brief | undefined;
+        try {
+          parsed = JSON.parse(jsonRaw) as Brief;
+        } catch {
+          try {
+            const cleaned = jsonRaw.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '');
+            parsed = JSON.parse(cleaned) as Brief;
+          } catch { /* leave undefined */ }
+        }
+        const plain = (text.slice(0, startIdx) + tail).trim();
+        return { plain, brief: parsed };
+      }
+
+      function autoGrow() {
+        input.style.height = 'auto';
+        input.style.height = Math.min(input.scrollHeight, 128) + 'px';
+      }
+      input.addEventListener('input', autoGrow);
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          form.requestSubmit();
+        }
+      });
+
+      resetBtn.addEventListener('click', () => {
+        if (!confirm('¿Empezar de nuevo?')) return;
+        localStorage.removeItem(STORAGE_KEY);
+        messages = [{ role: 'assistant', content: SEED_OPENING }];
+        brief = undefined;
+        briefBox.classList.add('hidden');
+        handoff.classList.add('hidden');
+        form.classList.remove('hidden');
+        rerender();
+        persist();
+      });
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (inFlight) return;
+        const text = input.value.trim();
+        if (!text || text.length > MAX_INPUT_LEN) return;
+
+        messages.push({ role: 'user', content: text });
+        appendMessage('user', text);
+        input.value = '';
+        autoGrow();
+        persist();
+
+        const assistantDiv = appendMessage('assistant', '');
+        assistantDiv.classList.add('streaming');
+        let assistantText = '';
+
+        inFlight = true;
+        sendBtn.disabled = true;
+        input.disabled = true;
+
+        try {
+          const res = await fetch('/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ messages }),
+          });
+          if (!res.ok || !res.body) {
+            const errBody = await res.json().catch(() => ({ error: 'request_failed' }));
+            const msg = errBody.message || errBody.error || 'Algo falló del lado del servidor.';
+            assistantDiv.innerHTML = paragraphs(`(error) ${msg}`);
+            return;
+          }
+          const reader = res.body.getReader();
+          const decoder = new TextDecoder();
+          let buf = '';
+          while (true) {
+            const { value, done: streamDone } = await reader.read();
+            if (streamDone) break;
+            buf += decoder.decode(value, { stream: true });
+            let idx;
+            while ((idx = buf.indexOf('\n\n')) !== -1) {
+              const frame = buf.slice(0, idx);
+              buf = buf.slice(idx + 2);
+              if (!frame.startsWith('data: ')) continue;
+              const payload = frame.slice(6);
+              if (payload === '[DONE]') continue;
+              try {
+                const ev = JSON.parse(payload);
+                if (ev.type === 'delta' && typeof ev.text === 'string') {
+                  assistantText += ev.text;
+                  const { plain } = tryExtractBrief(assistantText);
+                  assistantDiv.innerHTML = paragraphs(plain);
+                  msgList.scrollTop = msgList.scrollHeight;
+                } else if (ev.type === 'error') {
+                  assistantText += `\n\n(error) ${ev.message}`;
+                  assistantDiv.innerHTML = paragraphs(assistantText);
+                }
+              } catch { /* ignore malformed frame */ }
+            }
+          }
+
+          const { plain, brief: parsedBrief } = tryExtractBrief(assistantText);
+          assistantDiv.innerHTML = paragraphs(plain || '(silencio)');
+          assistantDiv.classList.remove('streaming');
+          messages.push({ role: 'assistant', content: plain });
+          if (parsedBrief) {
+            brief = parsedBrief;
+            renderBrief(parsedBrief);
+          }
+          persist();
+        } catch (err) {
+          const msg = err instanceof Error ? err.message : String(err);
+          assistantDiv.innerHTML = paragraphs(`(network error) ${msg}`);
+        } finally {
+          inFlight = false;
+          sendBtn.disabled = false;
+          input.disabled = false;
+          input.focus();
+        }
+      });
+
+      // Boot — restore prior conversation, or seed a fresh one.
+      (function boot() {
+        const restored = restore();
+        if (restored && Array.isArray(restored.messages) && restored.messages.length > 0) {
+          messages = restored.messages;
+          brief = restored.brief;
+          rerender();
+        } else {
+          messages = [{ role: 'assistant', content: SEED_OPENING }];
+          // SSR HTML already shows the seed message — no rerender needed.
+          persist();
+        }
+        autoGrow();
+      })();
+    })();
+  </script>
+</TalkLayout>
