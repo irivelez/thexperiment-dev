@@ -391,30 +391,4 @@ const calBase = SITE.cta.booking;
   })();
 </script>
 
-<style>
-  #noa-chat .msg {
-    @apply text-base leading-relaxed text-ink-subtle font-sans;
-    max-width: 92%;
-  }
-  #noa-chat .msg.assistant {
-    @apply self-start;
-  }
-  #noa-chat .msg.user {
-    @apply self-end bg-paper-subtle border border-paper-line px-4 py-3;
-    color: #0a0a0a;
-  }
-  #noa-chat .msg.user p {
-    @apply text-ink;
-  }
-  #noa-chat .msg.assistant p + p,
-  #noa-chat .msg.user p + p {
-    @apply mt-2;
-  }
-  #noa-chat .msg.streaming::after {
-    content: '▍';
-    @apply text-signal animate-pulse-soft ml-1;
-  }
-  #noa-messages {
-    scroll-behavior: smooth;
-  }
-</style>
+<!-- Bubble styles live in src/styles/global.css for reliable token resolution. -->
