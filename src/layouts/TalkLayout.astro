@@ -88,7 +88,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site).toString();
         <a href="/" class="no-underline hover:text-white/70">{SITE.domain}</a>
         <span class="flex gap-4 items-center">
           <a href="/privacy" class="no-underline hover:text-white/70">Privacidad · Privacy</a>
-          <span>{SITE.legal.entity} · © {new Date().getFullYear()}</span>
+          <span>by {SITE.legal.entity} · © {new Date().getFullYear()}</span>
         </span>
       </div>
     </footer>
