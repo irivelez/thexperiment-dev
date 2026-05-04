@@ -1,0 +1,91 @@
+---
+/**
+ * /talk — the funnel entry page for traffic from LinkedIn / TikTok / WhatsApp.
+ *
+ * Different mission than the homepage:
+ *   - Homepage = the lab notebook for the network audience (Speedrun, peers).
+ *   - /talk     = the inspiration + invitation for the actual subjects of the
+ *                 experiment: LATAM SMB field-ops owners.
+ *
+ * Mobile-first: the chat is the hero. Everything else lives below the fold.
+ */
+import Base from '@layouts/Base.astro';
+import NoaChat from '@components/NoaChat.astro';
+import Counter from '@components/Counter.astro';
+import { SITE, TALK } from '@lib/constants';
+
+// Spanish-first by default (LATAM is the primary audience). The ?lang=en flag
+// flips the surface for English readers; the agent itself adapts to the user's
+// language from the first message regardless.
+const params = Astro.url.searchParams;
+const lang = (params.get('lang') === 'en' ? 'en' : 'es') as 'es' | 'en';
+const t = TALK[lang];
+const altLangHref = `/talk?lang=${lang === 'es' ? 'en' : 'es'}`;
+
+const renderBold = (text: string) =>
+  text.replace(/\*\*(.+?)\*\*/g, '<strong class="text-ink">$1</strong>');
+
+const title =
+  lang === 'es'
+    ? 'Hablá con mi agente · El experimento'
+    : 'Talk to my agent · The experiment';
+const description =
+  lang === 'es'
+    ? 'Hoy se están armando empresas desde cero con IA. ¿Y la tuya? 4 minutos con Noa, después 40 con Irina si querés.'
+    : 'New businesses are being built from scratch with AI. What about yours? 4 minutes with Noa, then 40 with Irina if you want to go deeper.';
+---
+
+<Base title={title} description={description}>
+  <section class="container-page pt-10 md:pt-14 pb-6">
+    <div class="flex items-center justify-between gap-4 mb-8">
+      <p class="eyebrow">{t.eyebrow}</p>
+      <a
+        href={altLangHref}
+        class="font-mono text-2xs uppercase tracking-[0.18em] text-ink-muted hover:text-ink no-underline"
+      >
+        {t.english}
+      </a>
+    </div>
+
+    <h1 class="max-w-4xl text-4xl md:text-6xl leading-[1.05] font-medium tracking-tight">
+      {t.question}
+    </h1>
+
+    <div class="mt-8 prose-body space-y-4 max-w-reading">
+      {t.subhead.map((p) => <p set:html={renderBold(p)} />)}
+    </div>
+  </section>
+
+  <section class="container-page pb-12 md:pb-16">
+    <p class="prose-body max-w-reading mb-6">
+      {t.chatIntro}
+    </p>
+    <NoaChat />
+    <p class="font-mono text-2xs text-ink-muted mt-4 max-w-reading">
+      {lang === 'es'
+        ? 'Tu conversación se guarda solo en tu navegador hasta que decidas agendar. Irina lee el brief recién cuando reservás los 40 minutos.'
+        : "Your conversation stays in your browser until you decide to book. Irina only reads the brief once you've booked the 40-minute slot."}
+    </p>
+  </section>
+
+  <section class="section">
+    <div class="container-page">
+      <p class="eyebrow mb-4">{t.why.eyebrow}</p>
+      <h2 class="max-w-3xl">{t.why.title}</h2>
+      <div class="prose-body mt-6 space-y-4 max-w-reading">
+        <p>{t.why.body}</p>
+        <p>{t.why.promise}</p>
+      </div>
+    </div>
+  </section>
+
+  <Counter />
+
+  <section class="section">
+    <div class="container-page max-w-reading">
+      <a href="/" class="font-mono text-sm tracking-wide hover:text-signal">
+        {t.watch}
+      </a>
+    </div>
+  </section>
+</Base>
