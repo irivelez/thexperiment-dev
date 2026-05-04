@@ -24,6 +24,9 @@ content/interviews/*
 *.swp
 *.swo
 
+# claude code scheduler runtime
+.claude/scheduled_tasks.lock
+
 # logs
 *.log
 npm-debug.log*
