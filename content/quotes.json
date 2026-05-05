@@ -17,6 +17,22 @@
       "country": "CO",
       "staffSize": 10,
       "permissionGranted": true
+    },
+    {
+      "text": "Es algo neurálgico para la operación de nosotros: la búsqueda de ese talento en cada una de las ciudades.",
+      "vertical": "field-services",
+      "city": null,
+      "country": "CO",
+      "staffSize": 10,
+      "permissionGranted": true
+    },
+    {
+      "text": "Tiempo de respuesta es clave, pero para nosotros disponibilidad es muy importante. Después, después de que atendamos los requerimientos, viene la calidad.",
+      "vertical": "field-services",
+      "city": null,
+      "country": "CO",
+      "staffSize": 10,
+      "permissionGranted": true
     }
   ]
 }

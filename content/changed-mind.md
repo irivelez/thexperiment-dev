@@ -9,6 +9,16 @@ contradictions.
 
 ---
 
+## Pre-sprint pilots — April 15–17, 2026 — Redin signal informs the hypothesis
+
+**What I was wondering before this:** does WhatsApp dominate the operator's whole stack, or just parts of it?
+
+**What these conversations showed:** A Colombian B2B field-services intermediary (10 staff, dispatchable workforce contracted ad-hoc across 8 cities) uses WhatsApp heavily on the customer-facing layer and inside their value chain (intermediaries communicate via WhatsApp + custom platforms). But for contractor self-service, the operator independently chose Telegram, not WhatsApp, when designing their own bot. The customer-facing layer is where WhatsApp dominates. The contractor / internal layer is where alternatives win.
+
+**What I took forward into the hypothesis:** the framing got sharpened to "WhatsApp is the OS for the operator's customer-facing layer," with the contractor/internal layer marked as an open question. That's how I went into Day 0 already mildly suspicious that the OS framing was per-layer, not whole-stack. Day 1 (Valar) then surfaced the regulated-vertical exception, where WhatsApp is absent on both layers. Together these two priors are forcing a rewrite from "WhatsApp is the OS for SMBs" to "the OS is whatever substrate a vertical uses today, and that substrate splits per layer (customer vs contractor) and per regulation (regulated vs not)."
+
+---
+
 ## Day 0 — May 3, 2026 — entering hypothesis
 
 **Working hypothesis:**
