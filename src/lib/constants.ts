@@ -59,13 +59,13 @@ export const HERO = {
  */
 export const SPINE = {
   en: [
-    `I have a working hypothesis — call it **Ari** — that WhatsApp isn't a channel for these businesses, it's the OS. Vertical agents get built on it, not retrofitted to it. But insight isn't a starting point. It's something you build.`,
-    `So I'm building it in public — counter, diary, quotes, contradictions, including the numbers that make me look stupid. Synthesis publishes May 17, same day my a16z Speedrun and YC applications go in. Those are deadlines. The POV is the output.`,
+    `I have a working hypothesis, call it **Ari**, that WhatsApp isn't a channel for these businesses, it's the OS. Vertical agents get built on it, not retrofitted to it. But insight isn't a starting point. It's something you build.`,
+    `So I'm building it in public: counter, diary, quotes, contradictions, including the numbers that make me look stupid. Synthesis publishes May 17, same day my a16z Speedrun and YC applications go in. Those are deadlines. The POV is the output.`,
     `Pick a time. Or watch live.`,
   ],
   es: [
-    `Tengo una hipótesis de trabajo — la llamo **Ari** — que WhatsApp no es un canal para estos negocios, es el sistema operativo. Los agentes verticales se construyen sobre él, no adaptados después. Pero el insight no es un punto de partida. Es algo que se construye.`,
-    `Por eso lo estoy construyendo en público — contador, diario, citas, contradicciones, incluyendo los números que me hacen quedar mal. La síntesis se publica el 17 de mayo, el mismo día en que envío mis aplicaciones a a16z Speedrun y YC. Esos son deadlines. La tesis es el resultado real.`,
+    `Tengo una hipótesis de trabajo, la llamo **Ari**, que WhatsApp no es un canal para estos negocios, es el sistema operativo. Los agentes verticales se construyen sobre él, no adaptados después. Pero el insight no es un punto de partida. Es algo que se construye.`,
+    `Por eso lo estoy construyendo en público: contador, diario, citas, contradicciones, incluyendo los números que me hacen quedar mal. La síntesis se publica el 17 de mayo, el mismo día en que envío mis aplicaciones a a16z Speedrun y YC. Esos son deadlines. La tesis es el resultado real.`,
     `Agenda tu turno. O mira en vivo.`,
   ],
 } as const;
