@@ -9,7 +9,7 @@ contradictions.
 
 ---
 
-## Day 0 — May 1, 2026 — entering hypothesis
+## Day 0 — May 3, 2026 — entering hypothesis
 
 **Working hypothesis:**
 WhatsApp is the OS for Spanish-speaking LATAM SMBs, not a channel. Vertical AI
