@@ -1,7 +1,39 @@
 {
   "$schema": "Each pattern: { text, status, count, verticals }. Status taxonomy: pending | early-signal | confirmed | contradicted. Promote early-signal → confirmed at 3+ mentions across 2+ verticals.",
-  "lastUpdated": "2026-05-01",
+  "lastUpdated": "2026-05-04",
   "patterns": [
+    {
+      "text": "Operators in Colombian health name ambient AI scribes (Digital Environmental Scribes; BMJ Best Practice / UpToDate / DynaMed-class decision-support layer) as the highest-impact, lowest-friction first product to adopt.",
+      "status": "early-signal",
+      "count": 1,
+      "verticals": ["health-staffing"]
+    },
+    {
+      "text": "Patient cycle-of-attention tracking (alerts on lateral needs without full EHR integration; Tensoreye-class) is the second-most-named high-impact gap.",
+      "status": "early-signal",
+      "count": 1,
+      "verticals": ["health-staffing"]
+    },
+    {
+      "text": "Clinical EHRs in Colombia don't expose APIs; per-clinic integration is bespoke. No national interoperability standard until April 2026 Ministry resolution (operativization unclear).",
+      "status": "early-signal",
+      "count": 1,
+      "verticals": ["health-staffing"]
+    },
+    {
+      "text": "B2B regulated verticals (health-staffing) don't operate on WhatsApp. Operations run on phone + Excel + private EHRs. Contradicts working hypothesis 'WhatsApp is the OS for LATAM SMBs.'",
+      "status": "contradicted",
+      "count": 1,
+      "verticals": ["health-staffing"]
+    },
+    {
+      "text": "Operators independently converge on manifesto thesis 'reemplazar el cómo, no el qué' when discussing AI vs. existing systems.",
+      "status": "early-signal",
+      "count": 1,
+      "verticals": ["health-staffing"]
+    }
+  ],
+  "_archived": [
     {
       "text": "The experiment hasn't started yet. First patterns appear after 3 conversations.",
       "status": "pending",

@@ -1,12 +1,16 @@
 {
-  "day": 0,
-  "totalCalls": 0,
+  "day": 3,
+  "totalCalls": 1,
   "targetCalls": 100,
   "totalDays": 16,
   "startDate": "2026-05-02",
   "endDate": "2026-05-17",
-  "lastUpdated": "2026-05-01T20:00:00-05:00",
-  "byVertical": {},
-  "byCountry": {},
+  "lastUpdated": "2026-05-04T22:30:40-05:00",
+  "byVertical": {
+    "health-staffing": 1
+  },
+  "byCountry": {
+    "CO": 1
+  },
   "pilotsBooked": 0
 }

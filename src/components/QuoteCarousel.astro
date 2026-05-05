@@ -9,7 +9,7 @@ import quotesData from '../../content/quotes.json';
 interface Quote {
   text: string;
   vertical: string;
-  city: string;
+  city: string | null;
   country: string;
   staffSize: number;
   permissionGranted: boolean;
@@ -47,7 +47,7 @@ const cleared = all.filter((q) => q.permissionGranted);
               <cite class="not-italic font-mono text-xs text-ink-muted whitespace-nowrap">
                 <span class="text-ink">Owner</span>, {q.vertical}
                 <br />
-                {q.city}, {q.country} · <span class="data">{q.staffSize}</span> staff
+                {q.city ? `${q.city}, ${q.country}` : q.country} · <span class="data">{q.staffSize}</span> staff
               </cite>
             </li>
           ))}

@@ -1,5 +1,22 @@
 {
-  "$schema": "Each quote: { text, vertical, city, country, staffSize, permissionGranted: true }. Only included on the site when permissionGranted === true. No names, no business names.",
-  "lastUpdated": "2026-05-01",
-  "quotes": []
+  "$schema": "Each quote: { text, vertical, city, country, staffSize, permissionGranted: true }. Only included on the site when permissionGranted === true. No names, no business names. Per privacy policy section 3, city may be null for stricter anonymization.",
+  "lastUpdated": "2026-05-04",
+  "quotes": [
+    {
+      "text": "Está todo por hacer porque es todo muy rudimentario.",
+      "vertical": "health-staffing",
+      "city": null,
+      "country": "CO",
+      "staffSize": 10,
+      "permissionGranted": true
+    },
+    {
+      "text": "Todo se maneja muy manual. Es como vamos a buscar un médico, y entonces como que buscarlo, pues llamándolo.",
+      "vertical": "health-staffing",
+      "city": null,
+      "country": "CO",
+      "staffSize": 10,
+      "permissionGranted": true
+    }
+  ]
 }
