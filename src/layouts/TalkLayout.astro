@@ -28,7 +28,7 @@ const {
   lang = 'es',
 } = Astro.props;
 
-const fullTitle = title ? `${title} — ${SITE.name}` : SITE.name;
+const fullTitle = title ? `${title} · ${SITE.name}` : SITE.name;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site).toString();
 ---
 
