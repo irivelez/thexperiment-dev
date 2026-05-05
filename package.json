@@ -3,7 +3,7 @@
   "type": "module",
   "version": "0.1.0",
   "private": true,
-  "description": "16 days. 100 conversations. Watch live.",
+  "description": "12 days. 100 conversations. Watch live.",
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",

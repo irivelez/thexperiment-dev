@@ -1,9 +1,9 @@
 # thexperiment.dev
 
-A 16-day experiment. 100 conversations with Spanish-speaking SMB founders.
+A 12-day experiment. 100 conversations with Spanish-speaking SMB founders.
 Live counter, daily diary, methodology disclosed in public.
 
-Synthesis publishes May 17 — same day applications go in.
+Synthesis publishes May 15, two days before applications go in.
 
 ---
 
@@ -20,8 +20,8 @@ Synthesis publishes May 17 — same day applications go in.
 content/
   diary/          # public daily entries
   interviews/     # PRIVATE — gitignored, never pushed
-  patterns.md     # 3-bullet emerging patterns (public)
-  quotes.md       # anonymized, permission-cleared quotes (public)
+  patterns.json   # 3-bullet emerging patterns (public)
+  quotes.json     # anonymized, permission-cleared quotes (public)
   changed-mind.md # log of contradictions (public, sanitized)
   _state.json     # totals + last-update timestamp (public)
 src/
@@ -31,8 +31,8 @@ src/
   lib/            # constants, helpers
   styles/         # global.css
 .claude/skills/
-  log-call.md     # /log-call after each conversation
-  publish-diary.md # /publish-diary at end of each day
+  log-call/SKILL.md     # /log-call after each conversation
+  publish-diary/SKILL.md # /publish-diary at end of each day
 ```
 
 ## Privacy firewall

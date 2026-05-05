@@ -1,6 +1,6 @@
 ---
 name: log-call
-description: After a customer conversation, process the full transcript into the experiment's data layer. Extracts structured insights, writes the private interview file, updates patterns/quotes/state, surfaces contradictions to the changed-mind log, shows a diff, and on approval commits + pushes. Triggers Vercel rebuild → live counter ticks. Use this every time Irina finishes a call during the May 2–17 sprint.
+description: After a customer conversation, process the full transcript into the experiment's data layer. Extracts structured insights, writes the private interview file, updates patterns/quotes/state, surfaces contradictions to the changed-mind log, shows a diff, and on approval commits + pushes. Triggers Vercel rebuild → live counter ticks. Use this every time Irina finishes a call during the May 4–15 sprint.
 ---
 
 # /log-call
@@ -123,7 +123,7 @@ Increment:
 - `byVertical[<vertical>]` += 1 (initialize to 1 if absent)
 - `byCountry[<country>]` += 1 (initialize to 1 if absent)
 - `lastUpdated` = current ISO timestamp in America/Bogota
-- `day` = compute from startDate (`2026-05-02`) to today, clamped 0..16
+- `day` = compute from startDate (`2026-05-04`) to today, clamped 0..12
 
 If `wouldPilot === true` and `permissionToQuote !== "denied"`, increment
 `pilotsBooked` by 1. (Confirm with user if uncertain.)
