@@ -1,6 +1,6 @@
 ---
 name: publish-diary
-description: At the end of each sprint day (or when the user explicitly invokes it), synthesize the day's customer conversations into a public-facing diary entry for thexperiment.dev. Reads private interview files, distills a 250–400 word lab-notebook entry, anonymizes everything, writes content/diary/day-NN.md, commits + pushes. Use this once per day during May 2–17 — typically after the last call, before bed.
+description: At the end of each sprint day (or when the user explicitly invokes it), synthesize the day's customer conversations into a public-facing diary entry for thexperiment.dev. Reads private interview files, distills a 250–400 word lab-notebook entry, anonymizes everything, writes content/diary/day-NN.md, commits + pushes. Use this once per day during May 4–15 — typically after the last call, before bed.
 ---
 
 # /publish-diary
@@ -13,7 +13,7 @@ as a "what changed today" receipt.
 ## Inputs
 
 The user invokes `/publish-diary`. Optional argument: a specific day number
-(default = current day, computed from today vs `2026-05-02`).
+(default = current day, computed from today vs `2026-05-04`).
 
 ## Steps
 
@@ -69,7 +69,7 @@ Structure (flexible):
    Did today confirm an early-signal? Contradict one? Surface a new candidate?
 4. **What I'm doing about it tomorrow** — one sentence on the next concrete move.
 
-Do NOT include the day number, date, or "Day X of 16" in the body — those go
+Do NOT include the day number, date, or "Day X of 12" in the body — those go
 in the frontmatter and render in the layout.
 
 ### 5. Write the file
@@ -90,10 +90,10 @@ lang: en
 ```
 
 Title rules:
-- No "Day X of 16" prefix — that's in the frontmatter.
+- No "Day X of 12" prefix — that's in the frontmatter.
 - Active voice, specific. Bad: "Some interesting findings today."
   Good: "Three founders said the same thing about Saturday nights."
-- For day-8 contradiction post: title should make the change of mind
+- For day-6 contradiction post: title should make the change of mind
   legible. Example: "I was wrong about price."
 
 Body: 250–400 words, the structure above.
@@ -128,7 +128,7 @@ commit.
 
 After push, report:
 *"Pushed. day-<NN> publishes at thexperiment.dev/diary/day-<NN> in ~30s.
-Total calls: <N>. Day <D> of 16."*
+Total calls: <N>. Day <D> of 12."*
 
 ### 9. Suggest the LinkedIn post
 
@@ -137,7 +137,7 @@ After publishing, generate a LinkedIn-ready version:
 - 1300-character target (LinkedIn's sweet spot for reach)
 - Hook in the first 2 lines (before the "...see more" fold)
 - Same lede as the diary, expanded with more concrete detail
-- End with: "Día <D>/16 · <calls>/100 conversaciones · thexperiment.dev"
+- End with: "Día <D>/12 · <calls>/100 conversaciones · thexperiment.dev"
 - Add `#construyendoenpúblico` (es) and `#buildinginpublic` (en) hashtags
   ONLY in the very last line
 
@@ -146,16 +146,16 @@ manually posts to LinkedIn.
 
 ## Special days
 
-- **Day 0 (pre-launch, May 1):** "The bet" entry already exists.
+- **Day 0 (pre-launch, May 3):** "The bet" entry already exists.
   This skill should refuse to overwrite it.
-- **Day 8 (~May 9, mid-sprint):** The "I changed my mind" post is the highest-
+- **Day 6 (~May 9, mid-sprint):** The "I changed my mind" post is the highest-
   leverage entry of the entire sprint. Spend extra effort here. Pull from
   `content/changed-mind.md` for the substance. The headline must include the
   contradiction (e.g., "I was wrong about ___.").
-- **Day 14 (May 15, synthesis prep):** Lower call volume; entry should preview
+- **Day 10 (May 13, synthesis prep):** Lower call volume; entry should preview
   the POV being assembled. Tease without revealing.
-- **Day 15 (May 16, synthesis):** Same. Build anticipation for May 17.
-- **Day 16 (May 17, ship day):** This entry coincides with the POV launch.
+- **Day 11 (May 14, synthesis):** Same. Build anticipation for May 15.
+- **Day 12 (May 15, ship day):** This entry coincides with the POV launch.
   Title: "The thesis." Body: brief — point to /pov. The POV doc itself does
   the heavy lifting.
 
