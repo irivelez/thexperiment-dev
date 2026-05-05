@@ -5,9 +5,10 @@ One-time setup. After this, every `git push origin main` auto-deploys in ~30s.
 ## 1. Push the repo to GitHub
 
 ```bash
-# Create a new repo at github.com/<you>/thexperiment-dev (private or public)
-# Then:
-git remote add origin git@github.com:<you>/thexperiment-dev.git
+# Repo: https://github.com/irivelez/thexperiment-dev (already created, public)
+# If setting up a fresh clone, the remote is wired automatically.
+# Manual setup:
+git remote add origin https://github.com/irivelez/thexperiment-dev.git
 git push -u origin main
 ```
 
