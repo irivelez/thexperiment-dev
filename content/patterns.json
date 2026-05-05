@@ -3,6 +3,38 @@
   "lastUpdated": "2026-05-04",
   "patterns": [
     {
+      "text": "Manual talent matching is the operational nerve for B2B service intermediaries dispatching labor on demand. One person typically sources across multiple cities; time-to-hire under 2-3 days is non-negotiable, faster than the manual sourcing layer can sustain.",
+      "status": "early-signal",
+      "count": 2,
+      "verticals": ["health-staffing", "field-services"]
+    },
+    {
+      "text": "Vertical operating systems in LATAM (clinical EHRs in health-staffing; customized B2B client platforms in field-services) don't expose APIs. Per-vertical or per-client integration is bespoke. Colombia's national interoperability resolution just launched April 2026; operativization unclear.",
+      "status": "early-signal",
+      "count": 2,
+      "verticals": ["health-staffing", "field-services"]
+    },
+    {
+      "text": "Operators in LATAM converge independently on the manifesto thesis 'reemplazar el cómo, no el qué' when discussing AI vs existing systems. They see the value in their existing customer relationships and want to transform internal operations, not be replaced.",
+      "status": "early-signal",
+      "count": 2,
+      "verticals": ["health-staffing", "field-services"]
+    },
+    {
+      "text": "Operators in field-services name two unsolved gaps as candidate WTP wedges: (a) self-service contractor onboarding with auto-validation of seguridad social, ARL, certifications, and broker-validated background checks (Rappi-class); (b) pricing intelligence — a contractor-side cost base by activity and city that prevents margin leakage from variable pricing.",
+      "status": "early-signal",
+      "count": 1,
+      "verticals": ["field-services"]
+    },
+    {
+      "text": "The 'WhatsApp is the OS' hypothesis bends per layer of the operator's stack: dominates customer-facing comms in non-regulated verticals (REDIM/field-services); absent in regulated verticals like health (Valar uses phone + Excel + private EHRs); operators select Telegram for contractor-facing self-service flows even when WhatsApp dominates their customer side. Customer-vs-contractor is the meaningful split.",
+      "status": "contradicted",
+      "count": 2,
+      "verticals": ["health-staffing", "field-services"]
+    }
+  ],
+  "_archived": [
+    {
       "text": "Operators in Colombian health name ambient AI scribes (Digital Environmental Scribes; BMJ Best Practice / UpToDate / DynaMed-class decision-support layer) as the highest-impact, lowest-friction first product to adopt.",
       "status": "early-signal",
       "count": 1,
@@ -14,26 +46,6 @@
       "count": 1,
       "verticals": ["health-staffing"]
     },
-    {
-      "text": "Clinical EHRs in Colombia don't expose APIs; per-clinic integration is bespoke. No national interoperability standard until April 2026 Ministry resolution (operativization unclear).",
-      "status": "early-signal",
-      "count": 1,
-      "verticals": ["health-staffing"]
-    },
-    {
-      "text": "B2B regulated verticals (health-staffing) don't operate on WhatsApp. Operations run on phone + Excel + private EHRs. Contradicts working hypothesis 'WhatsApp is the OS for LATAM SMBs.'",
-      "status": "contradicted",
-      "count": 1,
-      "verticals": ["health-staffing"]
-    },
-    {
-      "text": "Operators independently converge on manifesto thesis 'reemplazar el cómo, no el qué' when discussing AI vs. existing systems.",
-      "status": "early-signal",
-      "count": 1,
-      "verticals": ["health-staffing"]
-    }
-  ],
-  "_archived": [
     {
       "text": "The experiment hasn't started yet. First patterns appear after 3 conversations.",
       "status": "pending",
