@@ -16,7 +16,7 @@ function fmt(date: Date) {
 
 <Base
   title="Diary"
-  description="Daily entries from the experiment. 16 days. 100 conversations."
+  description="Daily entries from the experiment. 12 days. 100 conversations."
 >
   <section class="container-page py-16 md:py-24">
     <p class="eyebrow mb-4">All entries</p>
@@ -40,7 +40,7 @@ function fmt(date: Date) {
                 <div class="space-y-1">
                   <p class="data text-3xl text-ink leading-none">
                     {String(entry.data.day).padStart(2, '0')}
-                    <span class="text-ink-faint text-base">/{16}</span>
+                    <span class="text-ink-faint text-base">/{12}</span>
                   </p>
                   <p class="font-mono text-2xs uppercase tracking-[0.18em] text-ink-muted">
                     {fmt(entry.data.date)}
@@ -71,7 +71,7 @@ function fmt(date: Date) {
 
     {
       entries.length === 0 && (
-        <p class="text-ink-muted">No entries yet. Day 1 publishes May 2.</p>
+        <p class="text-ink-muted">No entries yet. Day 1 publishes May 4.</p>
       )
     }
   </section>

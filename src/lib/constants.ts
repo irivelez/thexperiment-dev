@@ -6,11 +6,11 @@
 export const SITE = {
   name: 'thexperiment.dev',
   url: 'https://thexperiment.dev',
-  description: '16 days. 100 conversations with Spanish-speaking SMB founders. Watch live.',
+  description: '12 days. 100 conversations with Spanish-speaking SMB founders. Watch live.',
   domain: 'thexperiment.dev',
-  startDate: new Date('2026-05-02T00:00:00-05:00'),
-  endDate: new Date('2026-05-17T23:59:59-05:00'),
-  totalDays: 16,
+  startDate: new Date('2026-05-04T00:00:00-05:00'),
+  endDate: new Date('2026-05-15T23:59:59-05:00'),
+  totalDays: 12,
   targetCalls: 100,
   author: {
     name: 'Irina Velez',
@@ -41,12 +41,12 @@ export const SITE = {
  */
 export const HERO = {
   en: {
-    eyebrow: 'Sixteen days. 100 conversations. One question:',
+    eyebrow: 'Twelve days. 100 conversations. One question:',
     question:
       'What should a fifteen-year LATAM enterprise operator actually build for Spanish-speaking SMBs in AI?',
   },
   es: {
-    eyebrow: 'Dieciséis días. 100 conversaciones. Una pregunta:',
+    eyebrow: 'Doce días. 100 conversaciones. Una pregunta:',
     question:
       '¿Qué debería construir, después de quince años operando empresas latinoamericanas, para las PYMES hispanohablantes en IA?',
   },
@@ -60,12 +60,12 @@ export const HERO = {
 export const SPINE = {
   en: [
     `I have a working hypothesis, call it **Ari**, that WhatsApp isn't a channel for these businesses, it's the OS. Vertical agents get built on it, not retrofitted to it. But insight isn't a starting point. It's something you build.`,
-    `So I'm building it in public: counter, diary, quotes, contradictions, including the numbers that make me look stupid. Synthesis publishes May 17, same day my a16z Speedrun and YC applications go in. Those are deadlines. The POV is the output.`,
+    `So I'm building it in public: counter, diary, quotes, contradictions, including the numbers that make me look stupid. Synthesis publishes May 15, two days before my a16z Speedrun and YC applications go in. Those are deadlines. The POV is the output.`,
     `Pick a time. Or watch live.`,
   ],
   es: [
     `Tengo una hipótesis de trabajo, la llamo **Ari**, que WhatsApp no es un canal para estos negocios, es el sistema operativo. Los agentes verticales se construyen sobre él, no adaptados después. Pero el insight no es un punto de partida. Es algo que se construye.`,
-    `Por eso lo estoy construyendo en público: contador, diario, citas, contradicciones, incluyendo los números que me hacen quedar mal. La síntesis se publica el 17 de mayo, el mismo día en que envío mis aplicaciones a a16z Speedrun y YC. Esos son deadlines. La tesis es el resultado real.`,
+    `Por eso lo estoy construyendo en público: contador, diario, citas, contradicciones, incluyendo los números que me hacen quedar mal. La síntesis se publica el 15 de mayo, dos días antes de enviar mis aplicaciones a a16z Speedrun y YC. Esos son deadlines. La tesis es el resultado real.`,
     `Agenda tu turno. O mira en vivo.`,
   ],
 } as const;

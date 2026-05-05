@@ -17,7 +17,7 @@ agents get built ON WhatsApp first, not retrofitted to it.
 
 **What I expect to find right:** message volume so high it's the operating layer.
 
-**What I expect to find wrong:** TBD — that's what the next 16 days will tell us.
+**What I expect to find wrong:** TBD — that's what the next 12 days will tell us.
 
 **What I'm afraid I'll find:** that the hypothesis is true but the wedge isn't
 the one I'm imagining (customer service / lead capture / scheduling).
@@ -25,7 +25,7 @@ Something else is the actual jugular.
 
 ---
 
-## Day 3 — May 4, 2026 — first interview shows B2B regulated vertical doesn't fit the WhatsApp hypothesis
+## Day 1 — May 4, 2026 — first interview shows B2B regulated vertical doesn't fit the WhatsApp hypothesis
 
 **What I thought:** WhatsApp is the OS for Spanish-speaking LATAM SMBs. Vertical AI agents get built ON WhatsApp first, not retrofitted to it.
 

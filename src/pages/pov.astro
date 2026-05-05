@@ -4,7 +4,7 @@ import { SITE } from '@lib/constants';
 import { getProgress } from '@lib/state';
 
 const progress = getProgress();
-const releaseDate = new Date('2026-05-17T17:00:00-05:00');
+const releaseDate = new Date('2026-05-15T17:00:00-05:00');
 const now = new Date();
 const releaseInMs = releaseDate.getTime() - now.getTime();
 const isReleased = releaseInMs <= 0;
@@ -13,7 +13,7 @@ const daysUntil = Math.max(0, Math.ceil(releaseInMs / (1000 * 60 * 60 * 24)));
 ---
 
 <Base
-  title="POV · publishes May 17"
+  title="POV · publishes May 15"
   description="The point of view. 1 page. 600 words. Single contrarian claim. Locked until synthesis day."
   noindex={!isReleased}
 >
@@ -25,17 +25,17 @@ const daysUntil = Math.max(0, Math.ceil(releaseInMs / (1000 * 60 * 60 * 24)));
         <div>
           <h1>The thesis is published.</h1>
           <p class="mt-6 prose-body">
-            The synthesized point of view from 100 conversations across 16 days is below.
-            (Pending, to be hand-published on May 17.)
+            The synthesized point of view from 100 conversations across 12 days is below.
+            (Pending, to be hand-published on May 15.)
           </p>
         </div>
       ) : (
         <div>
-          <h1>Locked until May 17.</h1>
+          <h1>Locked until May 15.</h1>
           <p class="mt-6 prose-body">
             The point of view publishes on the final day of the experiment, the same day applications
             go in. One page, ~600 words, one contrarian headline. It is the synthesized output of every
-            conversation in the diary and every pattern that survived the 16 days.
+            conversation in the diary and every pattern that survived the 12 days.
           </p>
 
           <div class="mt-12 grid grid-cols-2 gap-6 md:gap-12 max-w-md">
