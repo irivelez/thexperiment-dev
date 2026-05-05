@@ -17,6 +17,9 @@ dist/
 content/interviews/*
 !content/interviews/.gitkeep
 
+# internal documents — strategy docs, never published
+manifesto.md
+
 # editor / OS
 .DS_Store
 .idea/
