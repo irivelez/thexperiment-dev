@@ -53,7 +53,7 @@ stated, mark it `null`, don't fabricate. Required fields:
 | `wouldPilot` | boolean | Did they say yes/maybe/no to a pilot offer? |
 | `permissionToQuote` | "pending" \| "granted" \| "denied" | Default to "pending" unless the user says otherwise in their invocation |
 | `quotableLine` | string \| null | The single most quotable verbatim line (in original language) |
-| `contradictsHypothesis` | string \| null | If anything they said contradicts the working hypothesis ("WhatsApp is the OS, not a channel"), capture the contradiction in one sentence. Otherwise null. |
+| `contradictsHypothesis` | string \| null | If anything they said contradicts the working bet (per `private/bet.md`: AI can probably take over part of an existing business and either transform or replace it; the OS is the agentic system that operates them, not the channel they communicate through), capture the contradiction in one sentence. Otherwise null. |
 
 ### 3. Generate the filename
 

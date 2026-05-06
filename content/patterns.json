@@ -27,8 +27,8 @@
       "verticals": ["field-services"]
     },
     {
-      "text": "The 'WhatsApp is the OS' hypothesis bends per layer of the operator's stack: dominates customer-facing comms in non-regulated verticals (Redin/field-services); absent in regulated verticals like health (Valar uses phone + Excel + private EHRs); operators select Telegram for contractor-facing self-service flows even when WhatsApp dominates their customer side. Customer-vs-contractor is the meaningful split.",
-      "status": "contradicted",
+      "text": "The channel landscape these existing businesses operate on is multi-substrate, not WhatsApp-uniform. Customer-facing: WhatsApp dominates in non-regulated verticals (field-services); absent in regulated verticals like health (where operations run on phone + Excel + private EHRs). Contractor-facing: operators select Telegram or other channels even when WhatsApp dominates their customer side. Any agentic system operating these businesses must handle channel multiplicity, not assume a single substrate.",
+      "status": "early-signal",
       "count": 2,
       "verticals": ["health-staffing", "field-services"]
     }
