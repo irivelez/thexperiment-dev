@@ -45,12 +45,6 @@
       "status": "early-signal",
       "count": 1,
       "verticals": ["health-staffing"]
-    },
-    {
-      "text": "The experiment hasn't started yet. First patterns appear after 3 conversations.",
-      "status": "pending",
-      "count": 0,
-      "verticals": []
     }
   ]
 }
